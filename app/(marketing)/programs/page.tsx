@@ -7,7 +7,12 @@ import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { MARKETING_IMAGES } from "@/lib/brand";
 
-export const metadata = { title: "Programs" };
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata(
+  "Programs",
+  "Muay Thai, MMA, Boxing, Kids Martial Arts, self-defense & private coaching at Dojo Kaizen 2600 Baguio."
+);
 
 export default async function ProgramsPage() {
   const [cmsPrograms, programs] = await Promise.all([getCmsPrograms(), getPrograms()]);

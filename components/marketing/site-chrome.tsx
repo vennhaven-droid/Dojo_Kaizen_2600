@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/marketing/brand-logo";
+import { MobileNav } from "@/components/marketing/mobile-nav";
 import { BRAND } from "@/lib/brand";
 
 const NAV = [
@@ -18,8 +19,8 @@ const NAV = [
 export function MarketingHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-blue/30 bg-kaizen-black/95 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-        <Link href="/" className="flex items-center gap-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
           <BrandLogo size={52} priority />
           <div className="hidden sm:block">
             <p className="font-display text-sm font-bold text-gold leading-tight tracking-wide">
@@ -45,9 +46,10 @@ export function MarketingHeader() {
           <Button asChild variant="secondary" size="sm" className="hidden sm:inline-flex">
             <Link href="/enroll">Book Trial</Link>
           </Button>
-          <Button asChild variant="gold" size="sm">
-            <Link href="/enroll">Enroll Now</Link>
+          <Button asChild variant="gold" size="sm" className="hidden xs:inline-flex sm:inline-flex">
+            <Link href="/enroll">Enroll</Link>
           </Button>
+          <MobileNav items={NAV} />
         </div>
       </div>
     </header>
@@ -67,14 +69,19 @@ export function MarketingFooter() {
             <p className="text-sm text-kaizen-muted leading-relaxed">
               Premium martial arts training in Baguio City. Discipline. Respect. Continuous improvement.
             </p>
-            <a
-              href={BRAND.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-block text-sm font-semibold text-blue hover:underline"
-            >
-              Facebook Page →
-            </a>
+            <div className="mt-4 flex flex-col gap-2 text-sm font-semibold">
+              <a
+                href={BRAND.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue hover:underline"
+              >
+                Facebook Page →
+              </a>
+              <a href={BRAND.whatsapp} target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">
+                WhatsApp Us →
+              </a>
+            </div>
           </div>
           <div>
             <h4 className="font-display text-sm font-bold text-kaizen-gray mb-3">Programs</h4>
@@ -100,6 +107,9 @@ export function MarketingFooter() {
               <li>{BRAND.location}</li>
               <li><a href={`tel:${BRAND.phoneTel}`} className="hover:text-gold">{BRAND.phone}</a></li>
               <li>{BRAND.hours}</li>
+              <li>
+                <a href={`https://${BRAND.domain}`} className="hover:text-blue">{BRAND.domain}</a>
+              </li>
             </ul>
           </div>
         </div>

@@ -10,11 +10,10 @@ Use a **dedicated Supabase project** for Dojo Kaizen. Do not reuse keys from Ven
 
 ## 2. Run the database schema
 
-In **SQL Editor**, paste and run the full contents of:
+In **SQL Editor**, paste and run:
 
-```
-supabase/migrations/0001_init.sql
-```
+1. `supabase/migrations/0001_init.sql` (full schema)
+2. `supabase/migrations/0002_marketing_deploy.sql` (pricing, schedule, SEO content)
 
 ## 3. Copy API keys to `.env.local`
 

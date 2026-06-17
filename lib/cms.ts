@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { FALLBACK_PRICING, FALLBACK_SCHEDULE } from "@/lib/brand";
 
 export async function getSiteSettings() {
   const supabase = await createClient();
@@ -44,13 +45,14 @@ export async function getCmsPrograms() {
 
 export async function getCmsPricing() {
   const supabase = await createClient();
-  if (!supabase) return [];
+  if (!supabase) return [...FALLBACK_PRICING];
   const { data } = await supabase
     .from("cms_pricing")
     .select("*")
     .eq("is_published", true)
     .order("sort_order");
-  return data ?? [];
+  if (!data?.length) return [...FALLBACK_PRICING];
+  return data;
 }
 
 export async function getCmsTestimonials() {
@@ -98,13 +100,34 @@ export async function getCoaches() {
 
 export async function getProgramSchedules() {
   const supabase = await createClient();
-  if (!supabase) return [];
+  if (!supabase) {
+    return FALLBACK_SCHEDULE.map((s, i) => ({
+      id: `fallback-${i}`,
+      day_of_week: s.day,
+      start_time: s.start,
+      end_time: s.end,
+      age_group: s.ageGroup,
+      programs: { name: s.program },
+      coaches: null,
+    }));
+  }
   const { data } = await supabase
     .from("program_schedules")
     .select("*, programs(name, slug), coaches(profiles(first_name, last_name))")
     .order("day_of_week")
     .order("start_time");
-  return data ?? [];
+  if (!data?.length) {
+    return FALLBACK_SCHEDULE.map((s, i) => ({
+      id: `fallback-${i}`,
+      day_of_week: s.day,
+      start_time: s.start,
+      end_time: s.end,
+      age_group: s.ageGroup,
+      programs: { name: s.program },
+      coaches: null,
+    }));
+  }
+  return data;
 }
 
 export async function getPrograms() {

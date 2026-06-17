@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/marketing/motion";
 import { MarketingImage } from "@/components/marketing/marketing-image";
-import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
+import { BRAND, LOGO_SRC, MARKETING_IMAGES } from "@/lib/brand";
 
 type HeroSectionProps = {
   headline?: string;
@@ -38,12 +38,12 @@ export function HeroSection({
         <FadeIn>
           <div className="mb-8">
             <MarketingImage
-              src={imageUrl}
+              src={LOGO_SRC}
               alt="Dojo Kaizen logo"
               width={160}
               height={160}
               priority
-              className="mx-auto rounded-full ring-4 ring-gold/50 shadow-2xl shadow-blue/20"
+              className="mx-auto rounded-full ring-4 ring-gold/50 shadow-2xl shadow-blue/20 bg-kaizen-dark p-2 object-contain"
             />
           </div>
           <p className="font-display text-sm font-bold tracking-[0.35em] text-gold">DOJO KAIZEN 2600</p>

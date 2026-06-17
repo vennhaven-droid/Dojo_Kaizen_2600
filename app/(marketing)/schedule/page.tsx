@@ -3,7 +3,12 @@ import { FadeIn } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MARKETING_IMAGES } from "@/lib/brand";
 
-export const metadata = { title: "Schedule" };
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata(
+  "Schedule",
+  "Weekly class schedule at Dojo Kaizen 2600 — Muay Thai, MMA, boxing, kids classes & open mat in Baguio."
+);
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 

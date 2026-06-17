@@ -7,7 +7,12 @@ import { FadeIn } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MARKETING_IMAGES } from "@/lib/brand";
 
-export const metadata = { title: "Pricing" };
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata(
+  "Pricing",
+  "Affordable martial arts memberships in Baguio — Muay Thai from ₱2,500/mo, walk-in ₱300, kids programs & more."
+);
 
 export default async function PricingPage() {
   const tiers = await getCmsPricing();
@@ -21,7 +26,7 @@ export default async function PricingPage() {
           {tiers.map((tier, i) => {
             const features = (tier.features ?? []) as string[];
             return (
-              <FadeIn key={tier.id} delay={i * 0.1}>
+              <FadeIn key={tier.id ?? tier.title} delay={i * 0.1}>
                 <div className={`relative rounded-xl border p-8 ${tier.is_promoted ? "border-gold/50 bg-gold/5" : "border-blue/20 bg-kaizen-dark"}`}>
                   {tier.is_promoted && <Badge variant="gold" className="absolute -top-3 right-4">Popular</Badge>}
                   <h3 className="font-display text-xl font-bold text-kaizen-gray">{tier.title}</h3>

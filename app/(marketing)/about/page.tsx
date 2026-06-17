@@ -4,7 +4,12 @@ import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
 
-export const metadata = { title: "About Us" };
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata(
+  "About Us",
+  "Learn about Dojo Kaizen 2600 — our mission, values, and martial arts philosophy in Baguio City."
+);
 
 export default async function AboutPage() {
   const page = await getCmsPage("about");

@@ -5,7 +5,12 @@ import { FadeIn } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MARKETING_IMAGES } from "@/lib/brand";
 
-export const metadata = { title: "Events" };
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata(
+  "Events",
+  "Upcoming events, promotions, and announcements at Dojo Kaizen Martial Arts 2600 Baguio."
+);
 
 export default async function EventsPage() {
   const events = await getCmsEvents();

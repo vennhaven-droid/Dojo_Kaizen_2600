@@ -4,7 +4,12 @@ import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
 
-export const metadata = { title: "Student Success" };
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata(
+  "Student Success",
+  "Stories and testimonials from students and parents at Dojo Kaizen 2600 Baguio."
+);
 
 export default async function SuccessPage() {
   const [testimonials, gallery] = await Promise.all([getCmsTestimonials(), getCmsGallery()]);

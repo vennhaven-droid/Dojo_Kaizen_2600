@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Oswald } from "next/font/google";
 import "./globals.css";
+import { siteMetadata } from "@/lib/seo";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -14,17 +15,7 @@ const oswald = Oswald({
   display: "swap",
 });
 
-import { LOGO_REMOTE } from "@/lib/brand";
-
-export const metadata: Metadata = {
-  title: {
-    default: "Dojo Kaizen Martial Arts 2600",
-    template: "%s | Dojo Kaizen",
-  },
-  description:
-    "Premium martial arts academy in Baguio City. Muay Thai, MMA, Boxing, BJJ & more. Train with discipline. Improve continuously.",
-  icons: { icon: LOGO_REMOTE },
-};
+export const metadata: Metadata = siteMetadata;
 
 export default function RootLayout({
   children,

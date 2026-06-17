@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { FadeIn } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
-import { MarketingImage } from "@/components/marketing/marketing-image";
 import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
+
+const MAPS_EMBED = `https://maps.google.com/maps?q=${encodeURIComponent(BRAND.location)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
 export default function ContactPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -36,19 +37,42 @@ export default function ContactPage() {
         <div className="mx-auto max-w-5xl">
           <div className="grid gap-12 lg:grid-cols-2">
             <FadeIn>
-              <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl ring-2 ring-blue/30 lg:mb-0">
-                <MarketingImage src={MARKETING_IMAGES.facility} alt="Dojo Kaizen location" fill />
+              <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl ring-2 ring-blue/30 lg:mb-6">
+                <iframe
+                  title="Dojo Kaizen location map"
+                  src={MAPS_EMBED}
+                  className="absolute inset-0 h-full w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
               </div>
               <div className="space-y-6">
                 <div>
                   <h3 className="font-display font-bold text-gold">Location</h3>
                   <p className="mt-2 text-kaizen-silver">{BRAND.location}</p>
+                  <a
+                    href={`https://maps.google.com/?q=${encodeURIComponent(BRAND.location)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-block text-sm text-blue hover:underline"
+                  >
+                    Open in Google Maps →
+                  </a>
                 </div>
                 <div>
                   <h3 className="font-display font-bold text-gold">Phone</h3>
                   <p className="mt-2">
                     <a href={`tel:${BRAND.phoneTel}`} className="text-kaizen-silver hover:text-gold">{BRAND.phone}</a>
                   </p>
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-gold">WhatsApp</h3>
+                  <Button asChild variant="gold" size="sm" className="mt-2">
+                    <a href={BRAND.whatsapp} target="_blank" rel="noopener noreferrer">
+                      Message on WhatsApp
+                    </a>
+                  </Button>
                 </div>
                 <div>
                   <h3 className="font-display font-bold text-gold">Hours</h3>
@@ -85,7 +109,7 @@ export default function ContactPage() {
                   {status === "loading" ? "Sending..." : "Send Message"}
                 </Button>
                 {status === "success" && <p className="text-sm text-green-400">Message sent!</p>}
-                {status === "error" && <p className="text-sm text-red-400">Failed to send. Try again.</p>}
+                {status === "error" && <p className="text-sm text-red-400">Failed to send. Try again or WhatsApp us.</p>}
               </form>
             </FadeIn>
           </div>

@@ -4,6 +4,7 @@ import { FadeIn, SectionHeading } from "@/components/marketing/motion";
 import { HeroSection } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { MARKETING_IMAGES } from "@/lib/brand";
+import { pageMetadata } from "@/lib/seo";
 import {
   getCmsPage,
   getCmsPrograms,
@@ -11,6 +12,11 @@ import {
   getCmsEvents,
   getSiteSettings,
 } from "@/lib/cms";
+
+export const metadata = pageMetadata(
+  "Home",
+  "Dojo Kaizen 2600 — Muay Thai, MMA, Boxing & kids martial arts in Baguio City. Book a free trial today."
+);
 
 export default async function HomePage() {
   const [page, programs, testimonials, events, settings] = await Promise.all([
@@ -102,6 +108,21 @@ export default async function HomePage() {
                     <p className="text-sm text-kaizen-muted">{t.author_role}</p>
                   </footer>
                 </blockquote>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-blue/20 bg-kaizen-dark/50 px-4 py-20 sm:px-6">
+        <div className="mx-auto max-w-7xl">
+          <FadeIn><SectionHeading title="Training Gallery" subtitle="A glimpse of life at the dojo" /></FadeIn>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {MARKETING_IMAGES.gallery.map((src, i) => (
+              <FadeIn key={src} delay={i * 0.08}>
+                <div className="relative aspect-[4/3] overflow-hidden rounded-xl ring-1 ring-blue/30">
+                  <MarketingImage src={src} alt={`Dojo Kaizen training ${i + 1}`} fill className="transition-transform hover:scale-105" />
+                </div>
               </FadeIn>
             ))}
           </div>
