@@ -1,64 +1,52 @@
 import Link from "next/link";
-import { getPrograms, getCmsPrograms } from "@/lib/cms";
-import { formatPeso } from "@/lib/utils";
+import { FLYER_PROGRAMS, MARKETING_IMAGES } from "@/lib/brand";
 import { Button } from "@/components/ui/button";
-import { FadeIn } from "@/components/marketing/motion";
+import { FadeIn, StaggerChildren, StaggerItem } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
-import { MARKETING_IMAGES } from "@/lib/brand";
-
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
   "Programs",
-  "Muay Thai, MMA, Boxing, Kids Martial Arts, self-defense & private coaching at Dojo Kaizen 2600 Baguio."
+  "Muay Thai, MMA, Boxing, and Brazilian Jiu-Jitsu at Dojo Kaizen 2600 Baguio."
 );
 
-export default async function ProgramsPage() {
-  const [cmsPrograms, programs] = await Promise.all([getCmsPrograms(), getPrograms()]);
-  const list = programs.length > 0 ? programs : cmsPrograms.map((p) => (p as { programs?: typeof programs[0] }).programs ?? p);
-
+export default function ProgramsPage() {
   return (
     <>
       <PageBanner
         title="Training Programs"
-        subtitle="Muay Thai, MMA, Boxing, BJJ, and more — find the perfect program for your goals."
+        subtitle="Muay Thai, MMA, Boxing, BJJ — find the perfect program for your goals."
         imageUrl={MARKETING_IMAGES.programs}
       />
       <div className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 md:grid-cols-2">
-            {list.map((p, i) => {
-              const prog = p as { id?: string; name?: string; title?: string; description?: string; age_min?: number; age_max?: number; default_price?: number };
-              return (
-                <FadeIn key={prog.id ?? i} delay={i * 0.05}>
-                  <article className="overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark">
-                    <div className="relative h-48">
-                      <MarketingImage src={MARKETING_IMAGES.programs} alt={prog.name ?? prog.title ?? "Program"} fill className="opacity-70" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-kaizen-dark via-kaizen-dark/40 to-transparent" />
-                      <h2 className="absolute bottom-4 left-6 font-display text-2xl font-bold text-gold">{prog.name ?? prog.title}</h2>
+          <StaggerChildren className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {FLYER_PROGRAMS.map((prog, i) => (
+              <StaggerItem key={prog.name}>
+                <FadeIn delay={i * 0.05}>
+                  <article className="group h-full overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark transition-all hover:border-gold/40">
+                    <div className="relative h-32 overflow-hidden">
+                      <MarketingImage
+                        src={MARKETING_IMAGES.programs}
+                        alt={prog.name}
+                        fill
+                        className="opacity-60 transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-kaizen-dark to-transparent" />
+                      <h2 className="absolute bottom-3 left-3 font-display text-sm font-bold text-gold sm:text-base">{prog.name}</h2>
                     </div>
-                    <div className="p-8">
-                      {(prog.age_min || prog.age_max) && (
-                        <p className="text-sm text-blue">
-                          Ages {prog.age_min ?? "?"}{prog.age_max ? `–${prog.age_max}` : "+"}
-                        </p>
-                      )}
-                      <p className="mt-4 text-kaizen-muted">{prog.description}</p>
-                      {prog.default_price != null && (
-                        <p className="mt-4 font-display text-xl font-bold text-kaizen-gray">
-                          From {formatPeso(Number(prog.default_price))}/mo
-                        </p>
-                      )}
-                      <Button asChild variant="gold" className="mt-6">
+                    <div className="p-4">
+                      <p className="text-xs text-kaizen-muted sm:text-sm line-clamp-2">{prog.tagline}</p>
+                      <Button asChild variant="gold" size="sm" className="mt-4 w-full">
                         <Link href="/enroll">Enroll Now</Link>
                       </Button>
                     </div>
                   </article>
                 </FadeIn>
-              );
-            })}
-          </div>
+              </StaggerItem>
+            ))}
+          </StaggerChildren>
         </div>
       </div>
     </>

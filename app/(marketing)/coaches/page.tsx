@@ -1,4 +1,4 @@
-import { FadeIn, ScaleIn, StaggerChildren, StaggerItem } from "@/components/marketing/motion";
+import { StaggerChildren, StaggerItem } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { COACHES_TEAM, MARKETING_IMAGES } from "@/lib/brand";
@@ -19,22 +19,21 @@ export default function CoachesPage() {
       />
       <div className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <StaggerChildren className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <StaggerChildren className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
             {COACHES_TEAM.map((coach, i) => (
               <StaggerItem key={`${coach.name}-${i}`}>
-                <article className="group overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark transition-all hover:border-gold/40 hover:shadow-xl hover:shadow-kaizen-red/10 hover:-translate-y-1">
-                  <div className="relative h-48 overflow-hidden">
+                <article className="group overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark text-center transition-all hover:border-gold/40 hover:shadow-xl hover:shadow-kaizen-red/10 hover:-translate-y-1">
+                  <div className="relative mx-auto aspect-[3/4] max-h-56 w-full overflow-hidden">
                     <MarketingImage
                       src={MARKETING_IMAGES.coachPlaceholder}
                       alt={coach.name}
                       fill
-                      className="opacity-70 transition-transform duration-500 group-hover:scale-110"
+                      className="opacity-70 transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-kaizen-dark via-kaizen-dark/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-kaizen-dark via-transparent to-transparent" />
                   </div>
-                  <div className="p-6">
-                    <h3 className="font-display text-xl font-bold text-gold">{coach.name}</h3>
-                    <p className="mt-1 text-sm text-kaizen-muted">{coach.role}</p>
+                  <div className="p-4">
+                    <h3 className="font-display text-lg font-bold text-gold">{coach.name}</h3>
                   </div>
                 </article>
               </StaggerItem>

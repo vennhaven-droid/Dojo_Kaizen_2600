@@ -113,4 +113,23 @@ h1, h2, h3, h4, .font-display {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up, .check-in-pulse { animation: none; }
+  .gallery-marquee-track { animation: none; }
+}
+
+@keyframes gallery-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.gallery-marquee-track {
+  animation: gallery-marquee 40s linear infinite;
+}
+
+.gallery-marquee:hover .gallery-marquee-track {
+  animation-play-state: paused;
+}
+
+.gallery-fade-edges {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }

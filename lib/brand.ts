@@ -24,7 +24,8 @@ export const LOGO_SRC = "/images/Home/logo.jpg";
 
 export const MARKETING_IMAGES = {
   hero: "/images/Home/hero.jpg",
-  about: "/images/Home/hero.jpg",
+  kaizenWay: "/images/Home/logo.jpg",
+  about: "/images/Home/logo.jpg",
   programs: "/images/Home/hero.jpg",
   coaches: "/images/Home/hero.jpg",
   facility: "/images/Home/hero.jpg",

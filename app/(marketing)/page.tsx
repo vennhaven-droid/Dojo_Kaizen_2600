@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FadeIn, ScaleIn, SectionHeading, StaggerChildren, StaggerItem } from "@/components/marketing/motion";
 import { HeroSection } from "@/components/marketing/hero-section";
+import { GalleryMarquee } from "@/components/marketing/gallery-marquee";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { BRAND, FLYER_PROGRAMS, MARKETING_IMAGES } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
@@ -36,12 +37,12 @@ export default async function HomePage() {
           <FadeIn>
             <SectionHeading title="Our Programs" subtitle="Four disciplines. One warrior mindset." />
           </FadeIn>
-          <StaggerChildren className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StaggerChildren className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
             {FLYER_PROGRAMS.map((p) => (
               <StaggerItem key={p.name}>
                 <ScaleIn>
                   <div className="group h-full overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark transition-all hover:border-kaizen-red/50 hover:shadow-lg hover:shadow-kaizen-red/10">
-                    <div className="relative h-36 overflow-hidden">
+                    <div className="relative h-28 overflow-hidden">
                       <MarketingImage
                         src={MARKETING_IMAGES.programs}
                         alt={p.name}
@@ -49,11 +50,11 @@ export default async function HomePage() {
                         className="opacity-50 transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-kaizen-dark to-transparent" />
-                      <h3 className="absolute bottom-4 left-4 font-display text-lg font-bold text-gold">{p.name}</h3>
+                      <h3 className="absolute bottom-3 left-3 font-display text-sm font-bold text-gold sm:text-base">{p.name}</h3>
                     </div>
-                    <div className="p-5">
-                      <p className="text-sm text-kaizen-muted">{p.tagline}</p>
-                      <Link href="/programs" className="mt-4 inline-block text-sm font-semibold text-blue hover:text-gold transition-colors">
+                    <div className="p-4">
+                      <p className="text-xs text-kaizen-muted sm:text-sm line-clamp-2">{p.tagline}</p>
+                      <Link href="/programs" className="mt-3 inline-block text-xs font-semibold text-blue hover:text-gold transition-colors sm:text-sm">
                         Learn more →
                       </Link>
                     </div>
@@ -68,8 +69,13 @@ export default async function HomePage() {
       <section className="border-y border-kaizen-red/20 bg-kaizen-dark/80 px-4 py-20 sm:px-6">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
           <FadeIn>
-            <div className="relative aspect-square max-w-md overflow-hidden rounded-2xl ring-2 ring-kaizen-red/30">
-              <MarketingImage src={MARKETING_IMAGES.about} alt="Dojo Kaizen academy" fill />
+            <div className="relative mx-auto aspect-square max-w-sm overflow-hidden rounded-2xl bg-kaizen-black ring-2 ring-kaizen-red/30">
+              <MarketingImage
+                src={MARKETING_IMAGES.kaizenWay}
+                alt="Dojo Kaizen logo"
+                fill
+                className="object-contain p-8"
+              />
             </div>
           </FadeIn>
           <FadeIn delay={0.15}>
@@ -95,17 +101,7 @@ export default async function HomePage() {
       <section className="border-y border-blue/20 bg-kaizen-black/50 px-4 py-20 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <FadeIn><SectionHeading title="Training Gallery" subtitle="Life at the dojo" /></FadeIn>
-          <StaggerChildren className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {MARKETING_IMAGES.gallery.map((src, i) => (
-              <StaggerItem key={src}>
-                <ScaleIn>
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-xl ring-1 ring-kaizen-red/20">
-                    <MarketingImage src={src} alt={`Dojo Kaizen training ${i + 1}`} fill className="transition-transform duration-500 hover:scale-105" />
-                  </div>
-                </ScaleIn>
-              </StaggerItem>
-            ))}
-          </StaggerChildren>
+          <GalleryMarquee images={MARKETING_IMAGES.gallery} />
         </div>
       </section>
 

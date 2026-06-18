@@ -3,7 +3,7 @@ import { FadeIn, SectionHeading } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { SocialLinks } from "@/components/marketing/social-links";
-import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
+import { BRAND, LOGO_SRC, MARKETING_IMAGES } from "@/lib/brand";
 
 import { pageMetadata } from "@/lib/seo";
 
@@ -28,8 +28,8 @@ export default async function AboutPage() {
         <div className="mx-auto max-w-5xl">
           <div className="mb-12 grid gap-8 lg:grid-cols-2">
             <FadeIn>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl ring-2 ring-blue/30">
-                <MarketingImage src={MARKETING_IMAGES.facility} alt="Dojo Kaizen facility" fill />
+              <div className="relative mx-auto aspect-square max-w-sm overflow-hidden rounded-2xl bg-kaizen-black ring-2 ring-blue/30">
+                <MarketingImage src={LOGO_SRC} alt="Dojo Kaizen logo" fill className="object-contain p-10" />
               </div>
             </FadeIn>
             <FadeIn delay={0.1}>
