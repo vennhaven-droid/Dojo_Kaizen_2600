@@ -87,6 +87,20 @@ h1, h2, h3, h4, .font-display {
     -1px -1px 0 color-mix(in srgb, var(--brand-black) 90%, transparent);
 }
 
+.headline-glow {
+  transition: text-shadow 0.3s ease;
+  cursor: default;
+}
+
+.headline-glow:hover {
+  text-shadow:
+    0 0 8px color-mix(in srgb, var(--brand-gold) 80%, transparent),
+    0 0 20px color-mix(in srgb, var(--brand-gold) 50%, transparent),
+    0 0 40px color-mix(in srgb, var(--brand-red) 35%, transparent),
+    2px 2px 0 color-mix(in srgb, var(--brand-red) 25%, transparent),
+    1px 1px 0 color-mix(in srgb, var(--brand-blue) 30%, transparent);
+}
+
 .portal-gradient {
   background: linear-gradient(180deg, #111111 0%, var(--brand-black) 100%);
 }
@@ -126,6 +140,10 @@ h1, h2, h3, h4, .font-display {
 }
 
 .gallery-marquee:hover .gallery-marquee-track {
+  animation-play-state: paused;
+}
+
+.gallery-marquee-paused .gallery-marquee-track {
   animation-play-state: paused;
 }
 

@@ -46,7 +46,7 @@ export function HeroSection({
             />
           </div>
           <p className="font-display text-sm font-bold tracking-[0.4em] text-gold">DOJO KAIZEN 2600</p>
-          <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-kaizen-gray sm:text-6xl lg:text-7xl text-distressed">
+          <h1 className="headline-glow mt-4 font-display text-4xl font-bold leading-tight text-kaizen-gray sm:text-6xl lg:text-7xl text-distressed">
             {headline}
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-kaizen-silver">{subheadline}</p>

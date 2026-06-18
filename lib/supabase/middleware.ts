@@ -16,6 +16,12 @@ const ROLE_ROUTES: Record<string, UserRole[]> = {
   "/student": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
 };
 
+function matchProtectedPrefix(path: string): string | undefined {
+  return PROTECTED_PREFIXES.find(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`)
+  );
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -45,7 +51,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const matchedPrefix = PROTECTED_PREFIXES.find((p) => path.startsWith(p));
+  const matchedPrefix = matchProtectedPrefix(path);
 
   if (!user && matchedPrefix) {
     const url = request.nextUrl.clone();

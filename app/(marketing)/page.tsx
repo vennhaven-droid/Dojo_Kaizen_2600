@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { FadeIn, ScaleIn, SectionHeading, StaggerChildren, StaggerItem } from "@/components/marketing/motion";
+import { FadeIn, SectionHeading } from "@/components/marketing/motion";
 import { HeroSection } from "@/components/marketing/hero-section";
 import { GalleryMarquee } from "@/components/marketing/gallery-marquee";
 import { MarketingImage } from "@/components/marketing/marketing-image";
-import { BRAND, FLYER_PROGRAMS, MARKETING_IMAGES } from "@/lib/brand";
+import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
 import { getCmsPage, getSiteSettings } from "@/lib/cms";
 
@@ -32,37 +32,10 @@ export default async function HomePage() {
         imageUrl={hero.imageUrl ?? MARKETING_IMAGES.hero}
       />
 
-      <section className="px-4 py-20 sm:px-6">
+      <section className="border-y border-blue/20 bg-kaizen-black/50 px-4 py-20 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <FadeIn>
-            <SectionHeading title="Our Programs" subtitle="Four disciplines. One warrior mindset." />
-          </FadeIn>
-          <StaggerChildren className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {FLYER_PROGRAMS.map((p) => (
-              <StaggerItem key={p.name}>
-                <ScaleIn>
-                  <div className="group h-full overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark transition-all hover:border-kaizen-red/50 hover:shadow-lg hover:shadow-kaizen-red/10">
-                    <div className="relative h-28 overflow-hidden">
-                      <MarketingImage
-                        src={MARKETING_IMAGES.programs}
-                        alt={p.name}
-                        fill
-                        className="opacity-50 transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-kaizen-dark to-transparent" />
-                      <h3 className="absolute bottom-3 left-3 font-display text-sm font-bold text-gold sm:text-base">{p.name}</h3>
-                    </div>
-                    <div className="p-4">
-                      <p className="text-xs text-kaizen-muted sm:text-sm line-clamp-2">{p.tagline}</p>
-                      <Link href="/programs" className="mt-3 inline-block text-xs font-semibold text-blue hover:text-gold transition-colors sm:text-sm">
-                        Learn more →
-                      </Link>
-                    </div>
-                  </div>
-                </ScaleIn>
-              </StaggerItem>
-            ))}
-          </StaggerChildren>
+          <FadeIn><SectionHeading title="Training Gallery" subtitle="Life at the dojo" /></FadeIn>
+          <GalleryMarquee images={MARKETING_IMAGES.gallery} />
         </div>
       </section>
 
@@ -95,13 +68,6 @@ export default async function HomePage() {
               <Link href="/about">Our Story</Link>
             </Button>
           </FadeIn>
-        </div>
-      </section>
-
-      <section className="border-y border-blue/20 bg-kaizen-black/50 px-4 py-20 sm:px-6">
-        <div className="mx-auto max-w-7xl">
-          <FadeIn><SectionHeading title="Training Gallery" subtitle="Life at the dojo" /></FadeIn>
-          <GalleryMarquee images={MARKETING_IMAGES.gallery} />
         </div>
       </section>
 

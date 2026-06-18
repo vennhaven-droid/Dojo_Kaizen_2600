@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FLYER_PROGRAMS, MARKETING_IMAGES } from "@/lib/brand";
+import { MARKETING_PROGRAMS, MARKETING_IMAGES } from "@/lib/brand";
 import { Button } from "@/components/ui/button";
 import { FadeIn, StaggerChildren, StaggerItem } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
@@ -8,7 +8,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
   "Programs",
-  "Muay Thai, MMA, Boxing, and Brazilian Jiu-Jitsu at Dojo Kaizen 2600 Baguio."
+  "Muay Thai, MMA, Boxing, kids martial arts, self-defense, fitness conditioning, and private coaching at Dojo Kaizen 2600 Baguio."
 );
 
 export default function ProgramsPage() {
@@ -16,13 +16,13 @@ export default function ProgramsPage() {
     <>
       <PageBanner
         title="Training Programs"
-        subtitle="Muay Thai, MMA, Boxing, BJJ — find the perfect program for your goals."
+        subtitle="Muay Thai, MMA, Boxing, kids programs, self-defense, and one-on-one coaching."
         imageUrl={MARKETING_IMAGES.programs}
       />
       <div className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <StaggerChildren className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {FLYER_PROGRAMS.map((prog, i) => (
+            {MARKETING_PROGRAMS.map((prog, i) => (
               <StaggerItem key={prog.name}>
                 <FadeIn delay={i * 0.05}>
                   <article className="group h-full overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark transition-all hover:border-gold/40">

@@ -122,15 +122,26 @@ export const FLYER_PROGRAMS = [
   { name: "Brazilian Jiu-Jitsu", tagline: "Technique · Control · Submissions" },
 ] as const;
 
+export const MARKETING_PROGRAMS = [
+  { name: "Muay Thai", tagline: "Traditional Thai boxing with modern training methods." },
+  { name: "MMA", tagline: "Mixed martial arts combining striking and grappling." },
+  { name: "Boxing", tagline: "Classic boxing fundamentals and competition prep." },
+  { name: "Kids Martial Arts", tagline: "Fun, safe martial arts for children ages 5–12." },
+  { name: "Teen Martial Arts", tagline: "Dynamic training for teens ages 13–17." },
+  { name: "Self Defense", tagline: "Practical self-defense for all skill levels." },
+  { name: "Fitness Conditioning", tagline: "High-intensity conditioning for fighters and athletes." },
+  { name: "Private Coaching", tagline: "One-on-one coaching tailored to your goals." },
+] as const;
+
 export const COACHES_TEAM = [
-  { name: "Brindle", role: "Head Coach" },
-  { name: "Daryll", role: "Coach" },
-  { name: "Glenn", role: "Coach" },
-  { name: "Kenneth", role: "Coach" },
-  { name: "Ariel", role: "Coach" },
-  { name: "Name", role: "Coach" },
-  { name: "Name", role: "Coach" },
-  { name: "Name", role: "Coach" },
+  { name: "Brindle", role: "Head Coach", bio: "Head coach — fundamentals, fight team, and academy leadership." },
+  { name: "Daryll", role: "Coach", bio: "Striking and pad work specialist." },
+  { name: "Glenn", role: "Coach", bio: "Muay Thai technique and conditioning." },
+  { name: "Kenneth", role: "Coach", bio: "MMA and grappling fundamentals." },
+  { name: "Ariel", role: "Coach", bio: "Boxing footwork and competition prep." },
+  { name: "Name", role: "Coach", bio: "Profile coming soon." },
+  { name: "Name", role: "Coach", bio: "Profile coming soon." },
+  { name: "Name", role: "Coach", bio: "Profile coming soon." },
 ] as const;
 
 /** Fallback pricing when CMS is empty */

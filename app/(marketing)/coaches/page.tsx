@@ -34,6 +34,7 @@ export default function CoachesPage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-display text-lg font-bold text-gold">{coach.name}</h3>
+                    <p className="mt-2 text-sm text-kaizen-muted leading-relaxed">{coach.bio}</p>
                   </div>
                 </article>
               </StaggerItem>
