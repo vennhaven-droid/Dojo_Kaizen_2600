@@ -82,7 +82,7 @@ export async function updateCmsTestimonial(id: string, formData: FormData) {
     .eq("id", id);
 
   revalidatePath("/");
-  revalidatePath("/success");
+  revalidatePath("/");
 }
 
 export async function createProgramAction(formData: FormData) {

@@ -34,7 +34,7 @@ export const siteMetadata: Metadata = {
     description: DEFAULT_DESCRIPTION,
     images: [
       {
-        url: "/images/hero.jpg",
+        url: "/images/Home/hero.jpg",
         width: 1920,
         height: 1080,
         alt: "Dojo Kaizen Martial Arts 2600 training in Baguio City",
@@ -45,7 +45,7 @@ export const siteMetadata: Metadata = {
     card: "summary_large_image",
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
-    images: ["/images/hero.jpg"],
+    images: ["/images/Home/hero.jpg"],
   },
   robots: {
     index: true,
@@ -55,8 +55,8 @@ export const siteMetadata: Metadata = {
     canonical: SITE_URL,
   },
   icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg",
+    icon: "/images/Home/logo.jpg",
+    apple: "/images/Home/logo.jpg",
   },
 };
 

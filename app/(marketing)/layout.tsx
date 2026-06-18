@@ -13,7 +13,7 @@ const localBusinessJsonLd = {
   image: `${SITE_URL}${MARKETING_IMAGES.hero}`,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Top Floor Palangdao Bldg., Lower General Luna",
+    streetAddress: "Lower General Luna",
     addressLocality: "Baguio City",
     postalCode: "2600",
     addressCountry: "PH",
@@ -24,7 +24,7 @@ const localBusinessJsonLd = {
     opens: "05:00",
     closes: "22:00",
   },
-  sameAs: [BRAND.facebook],
+  sameAs: [BRAND.facebook, BRAND.instagram],
 };
 
 export default function MarketingLayout({

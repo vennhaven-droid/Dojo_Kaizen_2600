@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { FadeIn } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
+import { SocialLinks } from "@/components/marketing/social-links";
 import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
 
-const MAPS_EMBED = `https://maps.google.com/maps?q=${encodeURIComponent(BRAND.location)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+const MAPS_EMBED = `https://maps.google.com/maps?q=${encodeURIComponent(BRAND.mapsEmbedQuery)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
 export default function ContactPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -37,7 +38,7 @@ export default function ContactPage() {
         <div className="mx-auto max-w-5xl">
           <div className="grid gap-12 lg:grid-cols-2">
             <FadeIn>
-              <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl ring-2 ring-blue/30 lg:mb-6">
+              <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl ring-2 ring-kaizen-red/30 lg:mb-6">
                 <iframe
                   title="Dojo Kaizen location map"
                   src={MAPS_EMBED}
@@ -52,7 +53,7 @@ export default function ContactPage() {
                   <h3 className="font-display font-bold text-gold">Location</h3>
                   <p className="mt-2 text-kaizen-silver">{BRAND.location}</p>
                   <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(BRAND.location)}`}
+                    href={BRAND.mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-2 inline-block text-sm text-blue hover:underline"
@@ -67,27 +68,12 @@ export default function ContactPage() {
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-display font-bold text-gold">WhatsApp</h3>
-                  <Button asChild variant="gold" size="sm" className="mt-2">
-                    <a href={BRAND.whatsapp} target="_blank" rel="noopener noreferrer">
-                      Message on WhatsApp
-                    </a>
-                  </Button>
-                </div>
-                <div>
                   <h3 className="font-display font-bold text-gold">Hours</h3>
                   <p className="mt-2 text-kaizen-silver">{BRAND.hours}</p>
                 </div>
                 <div>
-                  <h3 className="font-display font-bold text-gold">Facebook</h3>
-                  <a
-                    href={BRAND.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 inline-block text-blue hover:underline"
-                  >
-                    Dojo Kaizen 2600 | Baguio City
-                  </a>
+                  <h3 className="font-display font-bold text-gold">Follow Us</h3>
+                  <SocialLinks className="mt-3" />
                 </div>
               </div>
             </FadeIn>
@@ -109,7 +95,7 @@ export default function ContactPage() {
                   {status === "loading" ? "Sending..." : "Send Message"}
                 </Button>
                 {status === "success" && <p className="text-sm text-green-400">Message sent!</p>}
-                {status === "error" && <p className="text-sm text-red-400">Failed to send. Try again or WhatsApp us.</p>}
+                {status === "error" && <p className="text-sm text-red-400">Failed to send. Try again or message us on social media.</p>}
               </form>
             </FadeIn>
           </div>

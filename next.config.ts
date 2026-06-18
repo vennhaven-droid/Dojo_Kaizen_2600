@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.fbcdn.net" },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/success", destination: "/", permanent: true },
+      { source: "/events", destination: "/", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

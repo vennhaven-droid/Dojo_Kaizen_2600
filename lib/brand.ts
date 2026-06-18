@@ -8,31 +8,33 @@ export const BRAND = {
   shortName: "Dojo Kaizen 2600",
   tagline: "Kaizen Martial Arts",
   domain: "dojokaizen2600.com",
-  location: "Top Floor Palangdao Bldg., Lower General Luna, Baguio City 2600, Philippines",
+  location: "Lower General Luna, Baguio City, Philippines, 2600",
   phone: "0967 584 2594",
   phoneTel: "+639675842594",
-  whatsapp: "https://wa.me/639675842594",
   facebook: "https://www.facebook.com/profile.php?id=100084453027782",
+  instagram: "https://www.instagram.com/thedojokaizen_",
+  mapsUrl: "https://maps.app.goo.gl/qfmwb3XPXUFcwR3s8",
+  mapsEmbedQuery: "Dojo Kaizen Palangdao Building Lower General Luna Baguio City",
   hours: "Mon–Sun: 5:00 AM – 10:00 PM",
   email: "info@dojokaizen2600.com",
-  /** Google Maps search query for the dojo location */
-  mapsQuery: "Palangdao Building Lower General Luna Baguio City",
+  coreValues: ["Discipline", "Respect", "Improve Everyday", "Become Your Best"],
 } as const;
 
-export const LOGO_SRC = "/icon.svg";
+export const LOGO_SRC = "/images/Home/logo.jpg";
 
-/** Local marketing photos (replace with your own Facebook photos anytime) */
 export const MARKETING_IMAGES = {
-  hero: "/images/hero.jpg",
-  about: "/images/about.jpg",
-  programs: "/images/programs.jpg",
-  coaches: "/images/coaches.jpg",
-  facility: "/images/facility.jpg",
+  hero: "/images/Home/hero.jpg",
+  about: "/images/Home/hero.jpg",
+  programs: "/images/Home/hero.jpg",
+  coaches: "/images/Home/hero.jpg",
+  facility: "/images/Home/hero.jpg",
+  coachPlaceholder: "/images/Home/hero.jpg",
   gallery: [
-    "/images/gallery/1.jpg",
-    "/images/gallery/2.jpg",
-    "/images/gallery/3.jpg",
-    "/images/gallery/4.jpg",
+    "/images/Home/Posts/posts1.jpg",
+    "/images/Home/Posts/posts2.jpg",
+    "/images/Home/Posts/posts3.jpg",
+    "/images/Home/Posts/posts4.jpg",
+    "/images/Home/Posts/posts5.jpg",
   ],
 } as const;
 
@@ -48,23 +50,86 @@ export const BRAND_COLORS = {
   grayDark: "#1A1A1A",
 } as const;
 
-/** Fallback weekly schedule when DB has no rows yet */
-export const FALLBACK_SCHEDULE = [
-  { day: 1, program: "Muay Thai", start: "06:00", end: "07:30", ageGroup: "Adults" },
-  { day: 1, program: "Boxing", start: "17:00", end: "18:30", ageGroup: "Adults" },
-  { day: 1, program: "MMA", start: "19:00", end: "20:30", ageGroup: "Adults" },
-  { day: 2, program: "Fitness Conditioning", start: "06:00", end: "07:00", ageGroup: "Adults" },
-  { day: 2, program: "Muay Thai", start: "18:00", end: "19:30", ageGroup: "Adults" },
-  { day: 3, program: "Muay Thai", start: "06:00", end: "07:30", ageGroup: "Adults" },
-  { day: 3, program: "Kids Martial Arts", start: "16:00", end: "17:00", ageGroup: "Ages 5–12" },
-  { day: 3, program: "Boxing", start: "17:00", end: "18:30", ageGroup: "Adults" },
-  { day: 4, program: "MMA", start: "18:00", end: "19:30", ageGroup: "Adults" },
-  { day: 4, program: "Muay Thai", start: "19:00", end: "20:30", ageGroup: "Adults" },
-  { day: 5, program: "Muay Thai", start: "06:00", end: "07:30", ageGroup: "Adults" },
-  { day: 5, program: "Open Mat", start: "18:00", end: "20:00", ageGroup: "All levels" },
-  { day: 6, program: "Kids Martial Arts", start: "09:00", end: "10:30", ageGroup: "Ages 5–12" },
-  { day: 6, program: "Muay Thai", start: "10:30", end: "12:00", ageGroup: "Adults" },
-  { day: 0, program: "Open Mat", start: "08:00", end: "10:00", ageGroup: "All levels" },
+export type ScheduleBlockId = "morning" | "kids" | "afternoon" | "evening";
+
+export type ScheduleEntry = {
+  time: string;
+  className: string;
+  coach: string;
+  days: string;
+};
+
+export type ScheduleBlock = {
+  id: ScheduleBlockId;
+  title: string;
+  subtitle: string;
+  accent: string;
+  entries: ScheduleEntry[];
+};
+
+export const WEEKLY_SCHEDULE_BLOCKS: ScheduleBlock[] = [
+  {
+    id: "morning",
+    title: "Morning Classes",
+    subtitle: "Start strong — fundamentals every day",
+    accent: "border-blue/50 bg-blue/5",
+    entries: [
+      { time: "8:30 AM", className: "Kaizen Fundamentals", coach: "Coach Glenn", days: "MWF + Sun" },
+      { time: "9:30 AM", className: "Kaizen Fundamentals", coach: "Coach Brindle / Glenn", days: "Everyday" },
+      { time: "9:30 AM", className: "Kaizen Kids: Little Warriors", coach: "Coach Kenneth Banasan", days: "MWF" },
+      { time: "10:30 AM", className: "Kaizen Fundamentals", coach: "Coach Brindle / Glenn", days: "Everyday" },
+    ],
+  },
+  {
+    id: "kids",
+    title: "Kids & Teens",
+    subtitle: "Building confidence and discipline early",
+    accent: "border-green-500/40 bg-green-500/5",
+    entries: [
+      { time: "1:00 PM", className: "Kaizen Kids: Little Warriors", coach: "Coach Janel", days: "MWF" },
+      { time: "3:30 PM", className: "Next Gen Fighters", coach: "Coach Brindle", days: "TTHS" },
+      { time: "4:15 PM", className: "Kaizen Jiu-Jitsu (Kids)", coach: "Coach Marshall Caw-is", days: "MWF" },
+    ],
+  },
+  {
+    id: "afternoon",
+    title: "Afternoon / Adult",
+    subtitle: "Striking mastery and grappling fundamentals",
+    accent: "border-orange-500/40 bg-orange-500/5",
+    entries: [
+      { time: "2:00 PM", className: "Striking Mastery", coach: "Coach Ilidio Saysayan", days: "TTH" },
+      { time: "2:00 PM", className: "Kaizen Jiu-Jitsu", coach: "Coach Marshall Caw-is", days: "MWF" },
+    ],
+  },
+  {
+    id: "evening",
+    title: "Evening Classes",
+    subtitle: "Fight team training and advanced programs",
+    accent: "border-purple-500/40 bg-purple-500/5",
+    entries: [
+      { time: "5:30 PM", className: "HULK MMA", coach: "Coach Delfin Nawen", days: "MWF" },
+      { time: "5:30 PM", className: "White Belt Program (BJJ)", coach: "Coach Ritchie / Leslie", days: "Fri & Sun" },
+      { time: "5:30 PM", className: "Kaizen Elite Fight Team", coach: "Coach Daryl Antero / Brindle", days: "TTHS" },
+    ],
+  },
+];
+
+export const FLYER_PROGRAMS = [
+  { name: "Muay Thai", tagline: "Power · Discipline · Confidence" },
+  { name: "Boxing", tagline: "Speed · Footwork · Endurance" },
+  { name: "MMA", tagline: "Striking · Grappling · Conditioning" },
+  { name: "Brazilian Jiu-Jitsu", tagline: "Technique · Control · Submissions" },
+] as const;
+
+export const COACHES_TEAM = [
+  { name: "Brindle", role: "Head Coach" },
+  { name: "Daryll", role: "Coach" },
+  { name: "Glenn", role: "Coach" },
+  { name: "Kenneth", role: "Coach" },
+  { name: "Ariel", role: "Coach" },
+  { name: "Name", role: "Coach" },
+  { name: "Name", role: "Coach" },
+  { name: "Name", role: "Coach" },
 ] as const;
 
 /** Fallback pricing when CMS is empty */

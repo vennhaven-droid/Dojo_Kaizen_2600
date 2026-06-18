@@ -8,8 +8,6 @@ const routes = [
   "/coaches",
   "/schedule",
   "/pricing",
-  "/success",
-  "/events",
   "/contact",
   "/enroll",
 ];

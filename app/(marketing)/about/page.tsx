@@ -2,6 +2,7 @@ import { getCmsPage } from "@/lib/cms";
 import { FadeIn, SectionHeading } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
+import { SocialLinks } from "@/components/marketing/social-links";
 import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
 
 import { pageMetadata } from "@/lib/seo";
@@ -39,13 +40,16 @@ export default async function AboutPage() {
                 <a href={`tel:${BRAND.phoneTel}`} className="text-blue hover:underline">{BRAND.phone}</a>
               </p>
               <a
-                href={BRAND.facebook}
+                href={BRAND.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 inline-block text-sm font-semibold text-gold hover:underline"
               >
-                See photos & updates on Facebook →
+                Get Directions →
               </a>
+              <div className="mt-6">
+                <SocialLinks />
+              </div>
             </FadeIn>
           </div>
 
@@ -61,18 +65,16 @@ export default async function AboutPage() {
                 <p className="mt-3 text-kaizen-muted leading-relaxed">{s.content as string}</p>
               </FadeIn>
             ))}
-            {values.length > 0 && (
-              <FadeIn>
-                <h3 className="font-display text-xl font-bold text-gold">Core Values</h3>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {values.map((v) => (
-                    <span key={v} className="rounded-full border border-blue/40 bg-blue/10 px-4 py-2 text-sm font-semibold text-blue">
-                      {v}
-                    </span>
-                  ))}
-                </div>
-              </FadeIn>
-            )}
+            <FadeIn>
+              <h3 className="font-display text-xl font-bold text-gold">Core Values</h3>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {(values.length > 0 ? values : [...BRAND.coreValues]).map((v) => (
+                  <span key={v} className="rounded-full border border-blue/40 bg-blue/10 px-4 py-2 text-sm font-semibold text-blue">
+                    {v}
+                  </span>
+                ))}
+              </div>
+            </FadeIn>
           </div>
         </div>
       </div>

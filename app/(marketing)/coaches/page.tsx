@@ -1,66 +1,45 @@
-import { getCoaches } from "@/lib/cms";
-import { FadeIn } from "@/components/marketing/motion";
+import { FadeIn, ScaleIn, StaggerChildren, StaggerItem } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
-import { MARKETING_IMAGES } from "@/lib/brand";
-
+import { COACHES_TEAM, MARKETING_IMAGES } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
   "Coaches",
-  "Meet the coaches at Dojo Kaizen 2600 — experienced martial arts instructors in Baguio City."
+  "Meet the Kaizen team — experienced martial arts coaches at Dojo Kaizen 2600 Baguio."
 );
 
-export default async function CoachesPage() {
-  const coaches = await getCoaches();
-
+export default function CoachesPage() {
   return (
     <>
       <PageBanner
-        title="Our Coaches"
+        title="The Kaizen Team"
         subtitle="Experienced fighters and certified instructors guiding your journey."
         imageUrl={MARKETING_IMAGES.coaches}
       />
       <div className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          {coaches.length === 0 ? (
-            <div className="grid gap-8 lg:grid-cols-2">
-              <FadeIn>
-                <div className="relative aspect-square max-w-sm overflow-hidden rounded-2xl ring-2 ring-gold/30">
-                  <MarketingImage src={MARKETING_IMAGES.coaches} alt="Dojo Kaizen training" fill />
-                </div>
-              </FadeIn>
-              <FadeIn delay={0.1}>
-                <p className="text-lg text-kaizen-silver">
-                  Coach profiles coming soon. Visit our{" "}
-                  <a href="https://www.facebook.com/profile.php?id=100084453027782" target="_blank" rel="noopener noreferrer" className="text-blue hover:underline">
-                    Facebook page
-                  </a>{" "}
-                  to meet the team and see training in action.
-                </p>
-              </FadeIn>
-            </div>
-          ) : (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {coaches.map((c, i) => {
-                const profile = c.profiles as { first_name?: string; last_name?: string } | null;
-                const name = `${profile?.first_name ?? ""} ${profile?.last_name ?? ""}`.trim();
-                return (
-                  <FadeIn key={c.id} delay={i * 0.1}>
-                    <div className="overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark">
-                      <div className="relative h-40">
-                        <MarketingImage src={c.photo_url ?? MARKETING_IMAGES.coaches} alt={name} fill />
-                      </div>
-                      <div className="p-6">
-                        <h3 className="font-display text-xl font-bold text-gold">{name || "Coach"}</h3>
-                        <p className="mt-2 text-sm text-kaizen-muted line-clamp-4">{c.bio ?? c.experience}</p>
-                      </div>
-                    </div>
-                  </FadeIn>
-                );
-              })}
-            </div>
-          )}
+          <StaggerChildren className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {COACHES_TEAM.map((coach, i) => (
+              <StaggerItem key={`${coach.name}-${i}`}>
+                <article className="group overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark transition-all hover:border-gold/40 hover:shadow-xl hover:shadow-kaizen-red/10 hover:-translate-y-1">
+                  <div className="relative h-48 overflow-hidden">
+                    <MarketingImage
+                      src={MARKETING_IMAGES.coachPlaceholder}
+                      alt={coach.name}
+                      fill
+                      className="opacity-70 transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-kaizen-dark via-kaizen-dark/30 to-transparent" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-display text-xl font-bold text-gold">{coach.name}</h3>
+                    <p className="mt-1 text-sm text-kaizen-muted">{coach.role}</p>
+                  </div>
+                </article>
+              </StaggerItem>
+            ))}
+          </StaggerChildren>
         </div>
       </div>
     </>

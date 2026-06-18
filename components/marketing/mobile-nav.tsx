@@ -24,9 +24,8 @@ export function MobileNav({ items }: { items: NavItem[] }) {
         aria-expanded={open}
         aria-label={open ? "Close menu" : "Open menu"}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-blue/30 text-kaizen-gray transition-colors hover:bg-blue/10 hover:text-blue"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-kaizen-red/30 text-kaizen-gray transition-colors hover:bg-kaizen-red/10 hover:text-gold"
       >
-        <span className="sr-only">Menu</span>
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
           {open ? (
             <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
@@ -42,19 +41,17 @@ export function MobileNav({ items }: { items: NavItem[] }) {
 
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-kaizen-black/60 backdrop-blur-sm transition-opacity",
+          "fixed inset-0 z-40 bg-kaizen-black/70 backdrop-blur-sm transition-opacity",
           open ? "opacity-100" : "pointer-events-none opacity-0"
         )}
         onClick={() => setOpen(false)}
-        aria-hidden={!open}
       />
 
       <nav
         className={cn(
-          "fixed right-0 top-0 z-50 flex h-full w-[min(100%,20rem)] flex-col border-l border-blue/30 bg-kaizen-black/98 p-5 shadow-2xl transition-transform duration-200",
+          "fixed right-0 top-0 z-50 flex h-full w-[min(100%,20rem)] flex-col border-l border-kaizen-red/30 bg-kaizen-black/98 p-5 shadow-2xl transition-transform duration-200",
           open ? "translate-x-0" : "translate-x-full"
         )}
-        aria-hidden={!open}
       >
         <div className="mb-6 flex items-center justify-between">
           <p className="font-display text-sm font-bold tracking-widest text-gold">MENU</p>
@@ -62,7 +59,7 @@ export function MobileNav({ items }: { items: NavItem[] }) {
             type="button"
             aria-label="Close menu"
             onClick={() => setOpen(false)}
-            className="rounded-md p-2 text-kaizen-muted hover:bg-blue/10 hover:text-blue"
+            className="rounded-md p-2 text-kaizen-muted hover:bg-kaizen-red/10 hover:text-gold"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
@@ -76,7 +73,7 @@ export function MobileNav({ items }: { items: NavItem[] }) {
               <Link
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="block rounded-lg px-3 py-3 text-base font-medium text-kaizen-gray transition-colors hover:bg-blue/10 hover:text-blue"
+                className="block rounded-lg px-3 py-3 text-base font-medium text-kaizen-gray transition-colors hover:bg-kaizen-red/10 hover:text-gold"
               >
                 {item.label}
               </Link>
@@ -84,10 +81,7 @@ export function MobileNav({ items }: { items: NavItem[] }) {
           ))}
         </ul>
 
-        <div className="mt-4 space-y-2 border-t border-blue/20 pt-4">
-          <Button asChild variant="secondary" className="w-full" onClick={() => setOpen(false)}>
-            <Link href="/enroll">Book Trial</Link>
-          </Button>
+        <div className="mt-4 border-t border-kaizen-red/20 pt-4">
           <Button asChild variant="gold" className="w-full" onClick={() => setOpen(false)}>
             <Link href="/enroll">Enroll Now</Link>
           </Button>
