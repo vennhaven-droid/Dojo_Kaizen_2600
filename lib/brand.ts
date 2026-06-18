@@ -37,6 +37,14 @@ export const MARKETING_IMAGES = {
     "/images/Home/Posts/posts4.jpg",
     "/images/Home/Posts/posts5.jpg",
   ],
+  programHighlights: [
+    "/images/Home/Program/Program1.jpg",
+    "/images/Home/Program/Program2.jpg",
+    "/images/Home/Program/Program3.jpg",
+    "/images/Home/Program/Program4.jpg",
+    "/images/Home/Program/Program5.jpg",
+    "/images/Home/Program/Program6.jpg",
+  ],
 } as const;
 
 export const BRAND_COLORS = {

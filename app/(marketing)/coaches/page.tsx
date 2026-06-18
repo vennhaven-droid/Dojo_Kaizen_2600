@@ -1,6 +1,6 @@
+import { CoachCard } from "@/components/marketing/coach-card";
 import { StaggerChildren, StaggerItem } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
-import { MarketingImage } from "@/components/marketing/marketing-image";
 import { COACHES_TEAM, MARKETING_IMAGES } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
 
@@ -18,25 +18,16 @@ export default function CoachesPage() {
         imageUrl={MARKETING_IMAGES.coaches}
       />
       <div className="px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-7xl">
-          <StaggerChildren className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mx-auto max-w-5xl">
+          <StaggerChildren className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
             {COACHES_TEAM.map((coach, i) => (
-              <StaggerItem key={`${coach.name}-${i}`}>
-                <article className="group overflow-hidden rounded-xl border border-blue/30 bg-kaizen-dark text-center transition-all hover:border-gold/40 hover:shadow-xl hover:shadow-kaizen-red/10 hover:-translate-y-1">
-                  <div className="relative mx-auto aspect-[3/4] max-h-56 w-full overflow-hidden">
-                    <MarketingImage
-                      src={MARKETING_IMAGES.coachPlaceholder}
-                      alt={coach.name}
-                      fill
-                      className="opacity-70 transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-kaizen-dark via-transparent to-transparent" />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-display text-lg font-bold text-gold">{coach.name}</h3>
-                    <p className="mt-2 text-sm text-kaizen-muted leading-relaxed">{coach.bio}</p>
-                  </div>
-                </article>
+              <StaggerItem key={`${coach.name}-${i}`} className="h-full">
+                <CoachCard
+                  name={coach.name}
+                  role={coach.role}
+                  bio={coach.bio}
+                  imageSrc={MARKETING_IMAGES.coachPlaceholder}
+                />
               </StaggerItem>
             ))}
           </StaggerChildren>

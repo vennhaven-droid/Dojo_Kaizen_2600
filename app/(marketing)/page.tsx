@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { FadeIn, SectionHeading } from "@/components/marketing/motion";
 import { HeroSection } from "@/components/marketing/hero-section";
 import { GalleryMarquee } from "@/components/marketing/gallery-marquee";
+import { ProgramHighlightCarousel } from "@/components/marketing/program-highlight-carousel";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
@@ -66,6 +67,29 @@ export default async function HomePage() {
             </div>
             <Button asChild variant="outline" className="mt-8">
               <Link href="/about">Our Story</Link>
+            </Button>
+          </FadeIn>
+        </div>
+      </section>
+
+      <section className="px-4 py-20 sm:px-6">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
+          <FadeIn>
+            <ProgramHighlightCarousel images={MARKETING_IMAGES.programHighlights} />
+          </FadeIn>
+          <FadeIn delay={0.15}>
+            <SectionHeading
+              title="Our Programs"
+              subtitle="Eight paths. One warrior mindset."
+              align="left"
+            />
+            <p className="mt-6 text-lg text-kaizen-silver leading-relaxed">
+              From Muay Thai, MMA, and boxing to kids martial arts, self-defense, fitness conditioning,
+              and one-on-one private coaching — every program is built on discipline, respect, and
+              continuous improvement.
+            </p>
+            <Button asChild variant="outline" className="mt-8">
+              <Link href="/programs">Learn more</Link>
             </Button>
           </FadeIn>
         </div>
