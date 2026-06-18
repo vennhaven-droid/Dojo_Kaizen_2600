@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, Oswald } from "next/font/google";
+import { Oswald, Plus_Jakarta_Sans, Rajdhani } from "next/font/google";
 import "./globals.css";
 import { siteMetadata } from "@/lib/seo";
 
-const inter = Inter({
-  variable: "--font-inter",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const rajdhani = Rajdhani({
+  variable: "--font-rajdhani",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
@@ -21,8 +28,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${oswald.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-kaizen-black text-kaizen-gray antialiased">
+    <html lang="en" className={`${plusJakarta.variable} ${rajdhani.variable} ${oswald.variable} h-full overflow-x-hidden`}>
+      <body className="min-h-full flex flex-col overflow-x-hidden bg-kaizen-black text-kaizen-gray antialiased">
         {children}
       </body>
     </html>

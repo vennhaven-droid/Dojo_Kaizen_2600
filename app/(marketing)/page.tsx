@@ -33,7 +33,7 @@ export default async function HomePage() {
         imageUrl={hero.imageUrl ?? MARKETING_IMAGES.hero}
       />
 
-      <section className="border-y border-blue/20 bg-kaizen-black/50 px-4 py-20 sm:px-6">
+      <section className="overflow-hidden border-y border-blue/20 bg-kaizen-black/50 px-4 py-20 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <FadeIn><SectionHeading title="Training Gallery" subtitle="Life at the dojo" /></FadeIn>
           <GalleryMarquee images={MARKETING_IMAGES.gallery} />

@@ -142,7 +142,7 @@ export const MARKETING_PROGRAMS = [
 ] as const;
 
 export const COACHES_TEAM = [
-  { name: "Brindle", role: "Head Coach", bio: "Head coach — fundamentals, fight team, and academy leadership." },
+  { name: "Brindle", role: "Coach", bio: "Fundamentals, fight team, and academy leadership." },
   { name: "Daryll", role: "Coach", bio: "Striking and pad work specialist." },
   { name: "Glenn", role: "Coach", bio: "Muay Thai technique and conditioning." },
   { name: "Kenneth", role: "Coach", bio: "MMA and grappling fundamentals." },

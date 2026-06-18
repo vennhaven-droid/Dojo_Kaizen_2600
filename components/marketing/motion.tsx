@@ -72,7 +72,7 @@ export function SectionHeading({
 }) {
   return (
     <div className={align === "center" ? "text-center" : "text-left"}>
-      <h2 className="font-display text-3xl font-bold text-kaizen-gray sm:text-4xl text-distressed">{title}</h2>
+      <h2 className="font-display text-2xl font-bold text-kaizen-gray sm:text-4xl text-distressed">{title}</h2>
       {subtitle && (
         <p className={`mt-3 text-lg text-kaizen-muted max-w-2xl ${align === "center" ? "mx-auto" : ""}`}>
           {subtitle}

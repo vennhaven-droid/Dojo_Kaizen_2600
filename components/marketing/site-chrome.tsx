@@ -22,7 +22,7 @@ export function MarketingHeader() {
         <Link href="/" className="flex min-w-0 items-center gap-3">
           <BrandLogo size={52} priority />
           <div className="hidden sm:block">
-            <p className="font-display text-sm font-bold text-gold leading-tight tracking-wide">
+            <p className="font-hero text-sm font-bold text-gold leading-tight tracking-wide">
               {BRAND.tagline}
             </p>
             <p className="text-xs text-kaizen-silver tracking-widest">DOJO 2600</p>
@@ -60,7 +60,7 @@ export function MarketingFooter() {
           <div>
             <div className="mb-4 flex items-center gap-3">
               <BrandLogo size={44} />
-              <span className="font-display text-sm font-bold text-gold">{BRAND.shortName}</span>
+              <span className="font-hero text-sm font-bold text-gold">{BRAND.shortName}</span>
             </div>
             <p className="text-sm text-kaizen-muted leading-relaxed">
               Hard-hitting martial arts training in Baguio City. Muay Thai, Boxing, MMA & BJJ.

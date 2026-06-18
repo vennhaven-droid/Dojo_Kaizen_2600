@@ -33,13 +33,13 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col marketing-gradient">
+    <div className="flex min-h-screen flex-col overflow-x-hidden marketing-gradient">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
       <MarketingHeader />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 overflow-x-hidden">{children}</main>
       <MarketingFooter />
     </div>
   );

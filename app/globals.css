@@ -34,8 +34,9 @@
   --color-kaizen-dark: var(--brand-gray-dark);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-display: var(--font-oswald);
-  --font-sans: var(--font-inter);
+  --font-display: var(--font-rajdhani);
+  --font-sans: var(--font-jakarta);
+  --font-hero: var(--font-oswald);
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 0.25rem);
   --radius-sm: calc(var(--radius) - 0.4rem);
@@ -50,10 +51,17 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, .font-display {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.font-hero {
+  font-family: var(--font-hero), ui-sans-serif, system-ui, sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }

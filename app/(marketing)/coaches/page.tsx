@@ -24,7 +24,6 @@ export default function CoachesPage() {
               <StaggerItem key={`${coach.name}-${i}`} className="h-full">
                 <CoachCard
                   name={coach.name}
-                  role={coach.role}
                   bio={coach.bio}
                   imageSrc={MARKETING_IMAGES.coachPlaceholder}
                 />

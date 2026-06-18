@@ -45,16 +45,16 @@ export function HeroSection({
               className="mx-auto rounded-full ring-4 ring-gold/60 shadow-2xl shadow-kaizen-red/30 bg-kaizen-black/80 p-1 object-contain"
             />
           </div>
-          <p className="font-display text-sm font-bold tracking-[0.4em] text-gold">DOJO KAIZEN 2600</p>
-          <h1 className="headline-glow mt-4 font-display text-4xl font-bold leading-tight text-kaizen-gray sm:text-6xl lg:text-7xl text-distressed">
+          <p className="font-hero text-xs font-bold tracking-[0.2em] text-gold sm:tracking-[0.35em]">DOJO KAIZEN 2600</p>
+          <h1 className="headline-glow font-hero mt-4 text-3xl font-bold leading-tight text-kaizen-gray text-distressed sm:text-6xl lg:text-7xl">
             {headline}
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-kaizen-silver">{subheadline}</p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button asChild variant="gold" size="lg" className="min-w-[180px] shadow-lg shadow-gold/20">
+          <p className="mx-auto mt-6 max-w-2xl px-1 text-base text-kaizen-silver sm:text-lg">{subheadline}</p>
+          <div className="mt-10 flex w-full max-w-sm flex-col items-stretch gap-4 sm:max-w-none sm:flex-row sm:items-center sm:justify-center">
+            <Button asChild variant="gold" size="lg" className="w-full shadow-lg shadow-gold/20 sm:w-auto sm:min-w-[180px]">
               <Link href="/enroll">{primaryCta}</Link>
             </Button>
-            <Button asChild variant="secondary" size="lg" className="min-w-[180px]">
+            <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto sm:min-w-[180px]">
               <Link href="/schedule">View Schedule</Link>
             </Button>
           </div>
@@ -88,8 +88,8 @@ export function PageBanner({
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         <FadeIn>
           <p className="font-display text-xs font-bold tracking-[0.35em] text-gold">DOJO KAIZEN 2600</p>
-          <h1 className="mt-3 font-display text-4xl font-bold text-kaizen-gray sm:text-5xl text-distressed">{title}</h1>
-          {subtitle && <p className="mt-4 max-w-2xl text-lg text-kaizen-silver">{subtitle}</p>}
+          <h1 className="mt-3 font-display text-3xl font-bold text-kaizen-gray text-distressed sm:text-5xl">{title}</h1>
+          {subtitle && <p className="mt-4 max-w-2xl text-base text-kaizen-silver sm:text-lg">{subtitle}</p>}
           {children}
         </FadeIn>
       </div>
