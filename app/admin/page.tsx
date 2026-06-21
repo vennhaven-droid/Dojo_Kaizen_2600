@@ -12,6 +12,8 @@ export default async function AdminDashboard() {
   const [
     { count: totalStudents },
     { count: activeStudents },
+    { count: newEnrollments },
+    { count: newInquiries },
     { data: allStudents },
     { count: parents },
     { count: coaches },
@@ -21,6 +23,8 @@ export default async function AdminDashboard() {
   ] = await Promise.all([
     supabase?.from("students").select("*", { count: "exact", head: true }) ?? { count: 0 },
     supabase?.from("students").select("*", { count: "exact", head: true }).eq("status", "ACTIVE") ?? { count: 0 },
+    supabase?.from("enrollment_leads").select("*", { count: "exact", head: true }).eq("status", "NEW") ?? { count: 0 },
+    supabase?.from("contact_inquiries").select("*", { count: "exact", head: true }).eq("status", "NEW") ?? { count: 0 },
     supabase?.from("students").select("birthday") ?? { data: [] },
     supabase?.from("profiles").select("*", { count: "exact", head: true }).eq("role", "PARENT") ?? { count: 0 },
     supabase?.from("coaches").select("*", { count: "exact", head: true }).eq("is_active", true) ?? { count: 0 },
@@ -61,6 +65,8 @@ export default async function AdminDashboard() {
           <p className="text-sm text-kaizen-muted">Real-time academy overview</p>
         </div>
         <div className="flex gap-2">
+          <Button asChild variant="secondary" size="sm"><Link href="/admin/enrollments">Enrollments</Link></Button>
+          <Button asChild variant="secondary" size="sm"><Link href="/admin/inquiries">Inquiries</Link></Button>
           <Button asChild variant="secondary" size="sm"><Link href="/admin/students/new">+ Student</Link></Button>
           <Button asChild variant="gold" size="sm"><Link href="/admin/payments">Record Payment</Link></Button>
         </div>
@@ -68,9 +74,16 @@ export default async function AdminDashboard() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard label="Total Students" value={totalStudents ?? 0} sub={`${activeStudents ?? 0} active`} />
-        <MetricCard label="Attendance Today" value={attendanceToday ?? 0} variant="gold" />
+        <MetricCard label="New Enrollments" value={newEnrollments ?? 0} variant="gold" sub="pending review" />
+        <MetricCard label="New Inquiries" value={newInquiries ?? 0} sub="contact form" />
+        <MetricCard label="Attendance Today" value={attendanceToday ?? 0} variant="success" />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard label="Revenue Today" value={formatPeso(revenue.today)} />
         <MetricCard label="Revenue This Month" value={formatPeso(revenue.month)} variant="gold" />
+        <MetricCard label="Outstanding" value={formatPeso(ar.totalOutstanding)} variant="danger" sub={`${ar.overdue.length} overdue`} />
+        <MetricCard label="Birthdays This Week" value={birthdaysThisWeek.length} variant="success" />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -80,11 +93,10 @@ export default async function AdminDashboard() {
         <MetricCard label="Parents" value={parents ?? 0} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <MetricCard label="Coaches" value={coaches ?? 0} />
-        <MetricCard label="Outstanding" value={formatPeso(ar.totalOutstanding)} variant="danger" sub={`${ar.overdue.length} overdue`} />
+        <MetricCard label="Parents" value={parents ?? 0} />
         <MetricCard label="Locker Revenue" value={formatPeso(revenue.locker)} />
-        <MetricCard label="Birthdays This Week" value={birthdaysThisWeek.length} variant="success" />
       </div>
     </div>
   );

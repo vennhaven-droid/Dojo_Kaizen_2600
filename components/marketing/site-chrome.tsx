@@ -42,6 +42,9 @@ export function MarketingHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+            <Link href="/login">Login</Link>
+          </Button>
           <Button asChild variant="gold" size="sm" className="hidden sm:inline-flex shadow-md shadow-gold/10">
             <Link href="/enroll">Enroll Now</Link>
           </Button>

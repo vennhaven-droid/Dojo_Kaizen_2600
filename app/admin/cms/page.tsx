@@ -1,15 +1,17 @@
-import { getCmsPage, getSiteSettings, getCmsTestimonials } from "@/lib/cms";
+import { getCmsPage, getSiteSettings, getCmsTestimonials, getCmsGallery } from "@/lib/cms";
 import { updateHomeHero, updateSiteSettings } from "./actions";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export default async function CmsPage() {
-  const [homePage, settings, testimonials] = await Promise.all([
+  const [homePage, settings, testimonials, gallery] = await Promise.all([
     getCmsPage("home"),
     getSiteSettings(),
     getCmsTestimonials(),
+    getCmsGallery(),
   ]);
 
   const hero = ((homePage?.sections ?? {}) as Record<string, unknown>).hero as Record<string, string> ?? {};
@@ -43,6 +45,26 @@ export default async function CmsPage() {
         <div className="space-y-1.5"><Label>SEO Description</Label><Textarea name="seo_description" defaultValue={settings?.seo_description ?? ""} rows={2} /></div>
         <Button type="submit" variant="gold">Save Settings</Button>
       </form>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Link href="/admin/programs" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
+          <h3 className="font-display text-lg text-gold">Programs</h3>
+          <p className="mt-2 text-sm text-kaizen-muted">Manage training programs shown on /programs</p>
+        </Link>
+        <Link href="/admin/coaches" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
+          <h3 className="font-display text-lg text-gold">Coaches</h3>
+          <p className="mt-2 text-sm text-kaizen-muted">Coach bios and photos on /coaches</p>
+        </Link>
+        <Link href="/admin/programs" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
+          <h3 className="font-display text-lg text-gold">Schedule</h3>
+          <p className="mt-2 text-sm text-kaizen-muted">Class schedule via program schedules</p>
+        </Link>
+      </div>
+
+      <div className="rounded-xl border border-blue/20 bg-kaizen-dark p-6">
+        <h3 className="font-display text-lg text-gold mb-4">Gallery ({gallery.length} items)</h3>
+        <p className="text-sm text-kaizen-muted">Gallery images are managed in Supabase cms_gallery. Upload media via Supabase Storage bucket marketing-media.</p>
+      </div>
 
       <div className="rounded-xl border border-blue/20 bg-kaizen-dark p-6">
         <h3 className="font-display text-lg text-gold mb-4">Testimonials ({testimonials.length})</h3>

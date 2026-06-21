@@ -10,7 +10,7 @@ import type { UserRole } from "@/lib/types";
 const PROTECTED_PREFIXES = ["/admin", "/coach", "/parent", "/student"];
 
 const ROLE_ROUTES: Record<string, UserRole[]> = {
-  "/admin": ["SUPER_ADMIN", "ADMIN"],
+  "/admin": ["SUPER_ADMIN", "ADMIN", "COACH"],
   "/coach": ["SUPER_ADMIN", "ADMIN", "COACH"],
   "/parent": ["SUPER_ADMIN", "ADMIN", "PARENT"],
   "/student": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
@@ -63,9 +63,16 @@ export async function updateSession(request: NextRequest) {
   if (user && matchedPrefix) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, is_active")
       .eq("id", user.id)
       .single();
+
+    if (profile?.is_active === false) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("error", "deactivated");
+      return NextResponse.redirect(url);
+    }
 
     const role = profile?.role as UserRole | undefined;
     const allowed = ROLE_ROUTES[matchedPrefix] ?? [];
@@ -86,7 +93,7 @@ function getDefaultRoute(role: UserRole): string {
     case "ADMIN":
       return "/admin";
     case "COACH":
-      return "/coach";
+      return "/admin";
     case "PARENT":
       return "/parent";
     case "STUDENT":

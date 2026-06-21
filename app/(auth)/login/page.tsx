@@ -1,15 +1,23 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getCurrentProfile } from "@/lib/supabase/server";
+import { getRouteForRole } from "@/lib/auth-routes";
 import { AuthForm } from "@/components/auth/auth-form";
 
 export const metadata: Metadata = { title: "Log in" };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const profile = await getCurrentProfile();
+  if (profile && profile.is_active !== false) {
+    redirect(getRouteForRole(profile.role));
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center marketing-gradient px-4 py-12">
       <div className="w-full max-w-md">
         <Suspense>
-          <AuthForm mode="login" />
+          <AuthForm />
         </Suspense>
       </div>
     </div>

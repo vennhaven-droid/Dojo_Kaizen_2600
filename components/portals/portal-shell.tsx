@@ -16,33 +16,32 @@ import {
   ClipboardList,
   LogOut,
   Menu,
+  MessageSquare,
+  Shield,
+  UserCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import type { UserRole } from "@/lib/types";
+import type { AdminPermissions } from "@/lib/permissions";
+import { canSeeNavItem } from "@/lib/permissions";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/students", label: "Students", icon: Users },
+  { href: "/admin/enrollments", label: "Enrollments", icon: FileText },
+  { href: "/admin/inquiries", label: "Inquiries", icon: MessageSquare },
+  { href: "/admin/payments", label: "Payments", icon: CreditCard },
+  { href: "/admin/attendance", label: "Attendance", icon: Calendar },
   { href: "/admin/programs", label: "Programs", icon: ClipboardList },
   { href: "/admin/coaches", label: "Coaches", icon: Users },
-  { href: "/admin/enrollments", label: "Enrollments", icon: FileText },
-  { href: "/admin/payments", label: "Payments", icon: CreditCard },
+  { href: "/admin/staff", label: "Staff", icon: Shield },
   { href: "/admin/lockers", label: "Lockers", icon: Lock },
-  { href: "/admin/attendance", label: "Attendance", icon: Calendar },
   { href: "/admin/competitions", label: "Competitions", icon: Trophy },
   { href: "/admin/retention", label: "Retention", icon: BarChart3 },
   { href: "/admin/reports", label: "Reports", icon: FileText },
-  { href: "/admin/cms", label: "CMS", icon: Settings },
+  { href: "/admin/cms", label: "Website CMS", icon: Settings },
   { href: "/admin/audit", label: "Audit Logs", icon: FileText },
-];
-
-const COACH_NAV = [
-  { href: "/coach", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/coach/students", label: "Students", icon: Users },
-  { href: "/coach/attendance", label: "Attendance", icon: Calendar },
-  { href: "/coach/plans", label: "Session Plans", icon: ClipboardList },
-  { href: "/coach/time", label: "Time Log", icon: Calendar },
 ];
 
 const PARENT_NAV = [
@@ -54,41 +53,38 @@ const PARENT_NAV = [
 
 const STUDENT_NAV = [
   { href: "/student", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/student/profile", label: "My Profile", icon: UserCircle },
   { href: "/student/attendance", label: "Attendance", icon: Calendar },
+  { href: "/student/payments", label: "Payments", icon: CreditCard },
   { href: "/student/achievements", label: "Achievements", icon: Trophy },
   { href: "/student/competitions", label: "Competitions", icon: Trophy },
 ];
 
-function getNav(role: UserRole) {
-  switch (role) {
-    case "SUPER_ADMIN":
-    case "ADMIN":
-      return ADMIN_NAV;
-    case "COACH":
-      return COACH_NAV;
-    case "PARENT":
-      return PARENT_NAV;
-    case "STUDENT":
-      return STUDENT_NAV;
-    default:
-      return [];
+function getNav(role: UserRole, permissions: AdminPermissions | null) {
+  if (role === "SUPER_ADMIN" || role === "ADMIN" || role === "COACH") {
+    return ADMIN_NAV.filter((item) => canSeeNavItem(item.href, role, permissions));
   }
+  if (role === "PARENT") return PARENT_NAV;
+  if (role === "STUDENT") return STUDENT_NAV;
+  return [];
 }
 
 export function PortalShell({
   role,
   title,
   userEmail,
+  permissions = null,
   children,
 }: {
   role: UserRole;
   title: string;
   userEmail?: string;
+  permissions?: AdminPermissions | null;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const nav = getNav(role);
+  const nav = getNav(role, permissions);
 
   return (
     <div className="flex min-h-screen portal-gradient">
@@ -103,10 +99,15 @@ export function PortalShell({
             DOJO KAIZEN
           </Link>
         </div>
-        <nav className="space-y-1 p-3">
+        <nav className="max-h-[calc(100vh-8rem)] space-y-1 overflow-y-auto p-3">
           {nav.map((item) => {
             const Icon = item.icon;
-            const active = pathname === item.href || (item.href !== "/admin" && item.href !== "/coach" && item.href !== "/parent" && item.href !== "/student" && pathname.startsWith(item.href));
+            const active =
+              pathname === item.href ||
+              (item.href !== "/admin" &&
+                item.href !== "/parent" &&
+                item.href !== "/student" &&
+                pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -117,7 +118,7 @@ export function PortalShell({
                   active ? "bg-blue/20 text-blue" : "text-kaizen-muted hover:bg-blue/10 hover:text-kaizen-gray"
                 )}
               >
-                <Icon className="size-4" />
+                <Icon className="size-4 shrink-0" />
                 {item.label}
               </Link>
             );
@@ -135,12 +136,12 @@ export function PortalShell({
       <div className="flex flex-1 flex-col lg:pl-64">
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-blue/20 bg-kaizen-black/95 px-4 backdrop-blur sm:px-6">
           <div className="flex items-center gap-3">
-            <button className="lg:hidden" onClick={() => setOpen(!open)}>
+            <button type="button" className="lg:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
               <Menu className="size-5 text-kaizen-gray" />
             </button>
             <h1 className="font-display text-lg font-bold text-kaizen-gray">{title}</h1>
           </div>
-          {userEmail && <span className="text-sm text-kaizen-muted">{userEmail}</span>}
+          {userEmail && <span className="hidden text-sm text-kaizen-muted sm:inline">{userEmail}</span>}
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
@@ -171,5 +172,32 @@ export function MetricCard({
       <p className="mt-1 font-display text-3xl font-bold text-kaizen-gray">{value}</p>
       {sub && <p className="mt-1 text-xs text-kaizen-muted">{sub}</p>}
     </div>
+  );
+}
+
+export function StatusBadge({ status }: { status: string }) {
+  const normalized = status.toUpperCase().replace(/ /g, "_");
+  const styles: Record<string, string> = {
+    NEW: "bg-gold/20 text-gold border-gold/40",
+    CONTACTED: "bg-blue/20 text-blue border-blue/40",
+    ENROLLED: "bg-green-500/20 text-green-400 border-green-500/40",
+    NOT_PROCEEDING: "bg-kaizen-muted/20 text-kaizen-muted border-kaizen-muted/40",
+    READ: "bg-blue/20 text-blue border-blue/40",
+    REPLIED: "bg-green-500/20 text-green-400 border-green-500/40",
+    CLOSED: "bg-kaizen-muted/20 text-kaizen-muted border-kaizen-muted/40",
+    PAID: "bg-green-500/20 text-green-400 border-green-500/40",
+    UNPAID: "bg-gold/20 text-gold border-gold/40",
+    PARTIAL: "bg-blue/20 text-blue border-blue/40",
+    OVERDUE: "bg-red-500/20 text-red-400 border-red-500/40",
+  };
+  return (
+    <span
+      className={cn(
+        "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold uppercase",
+        styles[normalized] ?? "border-blue/30 text-kaizen-muted"
+      )}
+    >
+      {status.replace(/_/g, " ")}
+    </span>
   );
 }

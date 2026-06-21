@@ -50,6 +50,7 @@ export interface Profile {
   phone: string | null;
   avatar_url: string | null;
   email: string | null;
+  is_active?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -122,6 +123,8 @@ export interface Attendance {
   date: string;
   check_in_method: CheckInMethod;
   checked_in_at: string;
+  checked_out_at?: string | null;
+  duration_minutes?: number | null;
   notes: string | null;
 }
 
@@ -136,6 +139,10 @@ export interface Payment {
   payment_type: string;
   notes: string | null;
   paid_at: string;
+  due_date?: string | null;
+  payment_status?: PaymentRecordStatus;
+  amount_due?: number | null;
+  amount_paid?: number | null;
 }
 
 export interface StudentStats {
@@ -193,11 +200,32 @@ export interface EnrollmentLead {
   program_interest: string | null;
   parent_name: string | null;
   parent_phone: string | null;
+  parent_email: string | null;
   emergency_contact: string | null;
   waiver_accepted: boolean;
   status: string;
+  notes: string | null;
+  assigned_to: string | null;
   created_at: string;
+  updated_at?: string;
 }
+
+export type InquiryStatus = "NEW" | "READ" | "REPLIED" | "CLOSED";
+
+export interface ContactInquiry {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  source_page: string | null;
+  status: InquiryStatus;
+  assigned_to: string | null;
+  admin_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type PaymentRecordStatus = "PAID" | "UNPAID" | "PARTIAL" | "OVERDUE";
 
 export interface Coach {
   id: string;

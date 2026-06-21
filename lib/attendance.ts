@@ -108,6 +108,43 @@ export async function checkInStudent(
   };
 }
 
+export async function checkOutStudent(studentId: string): Promise<CheckInResult> {
+  const supabase = createAdminClient() ?? (await createClient());
+  if (!supabase) {
+    return { success: false, message: "Database not configured" };
+  }
+
+  const today = todayISO();
+  const { data: attendance } = await supabase
+    .from("attendance")
+    .select("id, checked_in_at, checked_out_at")
+    .eq("student_id", studentId)
+    .eq("date", today)
+    .maybeSingle();
+
+  if (!attendance) {
+    return { success: false, message: "You have not checked in today" };
+  }
+  if (attendance.checked_out_at) {
+    return { success: false, message: "Already checked out today" };
+  }
+
+  const now = new Date();
+  const checkedIn = new Date(attendance.checked_in_at);
+  const durationMinutes = Math.max(1, Math.round((now.getTime() - checkedIn.getTime()) / 60000));
+
+  const { error } = await supabase
+    .from("attendance")
+    .update({ checked_out_at: now.toISOString(), duration_minutes: durationMinutes })
+    .eq("id", attendance.id);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  return { success: true, message: `Great session! ${durationMinutes} minutes logged.` };
+}
+
 async function updateStudentStats(
   supabase: Awaited<ReturnType<typeof createClient>>,
   studentId: string,

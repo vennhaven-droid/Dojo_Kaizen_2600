@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { adminCheckInAction } from "../actions";
+import { adminCheckInAction, adminCheckOutAction } from "../actions";
 import { Button } from "@/components/ui/button";
 import { todayISO } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -7,6 +7,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 async function checkInStudentAction(formData: FormData) {
   "use server";
   await adminCheckInAction(String(formData.get("student_id")));
+}
+
+async function checkOutStudentAction(formData: FormData) {
+  "use server";
+  await adminCheckOutAction(String(formData.get("student_id")));
 }
 
 export default async function AttendancePage() {
@@ -42,18 +47,31 @@ export default async function AttendancePage() {
           <TableHeader>
             <TableRow>
               <TableHead>Student</TableHead>
-              <TableHead>Time</TableHead>
+              <TableHead>Check In</TableHead>
+              <TableHead>Check Out</TableHead>
+              <TableHead>Duration</TableHead>
               <TableHead>Method</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {(todayAttendance ?? []).map((a) => {
-              const student = a.students as { first_name?: string; last_name?: string } | null;
+              const student = a.students as { first_name?: string; last_name?: string; id?: string } | null;
               return (
                 <TableRow key={a.id}>
                   <TableCell>{student?.first_name} {student?.last_name}</TableCell>
                   <TableCell>{new Date(a.checked_in_at).toLocaleTimeString()}</TableCell>
+                  <TableCell>{a.checked_out_at ? new Date(a.checked_out_at).toLocaleTimeString() : "—"}</TableCell>
+                  <TableCell>{a.duration_minutes ? `${a.duration_minutes} min` : "—"}</TableCell>
                   <TableCell>{a.check_in_method}</TableCell>
+                  <TableCell>
+                    {!a.checked_out_at && student?.id && (
+                      <form action={checkOutStudentAction}>
+                        <input type="hidden" name="student_id" value={student.id} />
+                        <Button type="submit" variant="outline" size="sm">Check out</Button>
+                      </form>
+                    )}
+                  </TableCell>
                 </TableRow>
               );
             })}

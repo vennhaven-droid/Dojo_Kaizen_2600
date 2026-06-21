@@ -6,6 +6,14 @@ const REMOVED_ROUTES: Record<string, string> = {
   "/events": "/",
 };
 
+const COACH_REDIRECTS: Record<string, string> = {
+  "/coach": "/admin",
+  "/coach/students": "/admin/students",
+  "/coach/attendance": "/admin/attendance",
+  "/coach/plans": "/admin/attendance",
+  "/coach/time": "/admin",
+};
+
 export async function middleware(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
   const proto = request.headers.get("x-forwarded-proto");
@@ -21,6 +29,11 @@ export async function middleware(request: NextRequest) {
   const redirectTo = REMOVED_ROUTES[request.nextUrl.pathname];
   if (redirectTo) {
     return NextResponse.redirect(new URL(redirectTo, request.url), 308);
+  }
+
+  const coachRedirect = COACH_REDIRECTS[request.nextUrl.pathname];
+  if (coachRedirect) {
+    return NextResponse.redirect(new URL(coachRedirect, request.url), 308);
   }
 
   return updateSession(request);

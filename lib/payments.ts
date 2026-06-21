@@ -11,9 +11,17 @@ export async function recordPayment(input: {
   locker_rental_id?: string;
   payment_type?: string;
   notes?: string;
+  due_date?: string;
+  payment_status?: "PAID" | "UNPAID" | "PARTIAL" | "OVERDUE";
+  amount_due?: number;
+  amount_paid?: number;
 }) {
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
+
+  const status = input.payment_status ?? "PAID";
+  const amountDue = input.amount_due ?? input.amount;
+  const amountPaid = input.amount_paid ?? input.amount;
 
   const { data, error } = await supabase
     .from("payments")
@@ -26,7 +34,11 @@ export async function recordPayment(input: {
       locker_rental_id: input.locker_rental_id,
       payment_type: input.payment_type ?? "membership",
       notes: input.notes,
-      paid_at: new Date().toISOString(),
+      paid_at: status === "PAID" || status === "PARTIAL" ? new Date().toISOString() : null,
+      due_date: input.due_date ?? null,
+      payment_status: status,
+      amount_due: amountDue,
+      amount_paid: amountPaid,
     })
     .select("*")
     .single();

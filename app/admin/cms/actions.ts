@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/access";
+import { requirePermission } from "@/lib/permissions-server";
 
 export async function updateCmsPage(slug: string, sections: Record<string, unknown>) {
-  await requireAdmin();
+  await requirePermission("manage_content");
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -20,7 +20,7 @@ export async function updateCmsPage(slug: string, sections: Record<string, unkno
 }
 
 export async function updateHomeHero(formData: FormData) {
-  await requireAdmin();
+  await requirePermission("manage_content");
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -39,7 +39,7 @@ export async function updateHomeHero(formData: FormData) {
 }
 
 export async function updateSiteSettings(formData: FormData) {
-  await requireAdmin();
+  await requirePermission("manage_content");
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -67,7 +67,7 @@ export async function updateSiteSettings(formData: FormData) {
 }
 
 export async function updateCmsTestimonial(id: string, formData: FormData) {
-  await requireAdmin();
+  await requirePermission("manage_content");
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -86,7 +86,7 @@ export async function updateCmsTestimonial(id: string, formData: FormData) {
 }
 
 export async function createProgramAction(formData: FormData) {
-  await requireAdmin();
+  await requirePermission("manage_programs");
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -107,7 +107,7 @@ export async function createProgramAction(formData: FormData) {
 }
 
 export async function createCompetitionAction(formData: FormData) {
-  await requireAdmin();
+  await requirePermission("view_students");
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 

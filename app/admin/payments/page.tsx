@@ -53,6 +53,18 @@ export default async function PaymentsPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5"><Label>Amount</Label><Input name="amount" type="number" step="0.01" required /></div>
+            <div className="space-y-1.5"><Label>Amount Paid</Label><Input name="amount_paid" type="number" step="0.01" /></div>
+            <div className="space-y-1.5"><Label>Amount Due</Label><Input name="amount_due" type="number" step="0.01" /></div>
+            <div className="space-y-1.5"><Label>Due Date</Label><Input name="due_date" type="date" /></div>
+            <div className="space-y-1.5">
+              <Label>Status</Label>
+              <select name="payment_status" className="flex h-11 w-full rounded-md border border-blue/20 bg-kaizen-black px-3 text-sm">
+                <option value="PAID">Paid</option>
+                <option value="UNPAID">Unpaid</option>
+                <option value="PARTIAL">Partial</option>
+                <option value="OVERDUE">Overdue</option>
+              </select>
+            </div>
             <div className="space-y-1.5">
               <Label>Method</Label>
               <select name="method" className="flex h-11 w-full rounded-md border border-blue/20 bg-kaizen-black px-3 text-sm">

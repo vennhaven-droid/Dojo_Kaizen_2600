@@ -2,8 +2,9 @@ import { createClient, getCurrentProfile } from "@/lib/supabase/server";
 import { getStudentForUser } from "@/lib/access";
 import { getStudentMemberships } from "@/lib/memberships";
 import { getStudentBalance } from "@/lib/payments";
-import { CheckInButton } from "@/components/portals/check-in-button";
+import { TrainTodayButton } from "@/components/portals/train-today-button";
 import { Badge } from "@/components/ui/badge";
+import { todayISO } from "@/lib/utils";
 
 export default async function StudentDashboard() {
   const profile = await getCurrentProfile();
@@ -26,6 +27,13 @@ export default async function StudentDashboard() {
     .select("*")
     .eq("student_id", student.id)
     .single() ?? { data: null };
+
+  const { data: todayAttendance } = await supabase
+    ?.from("attendance")
+    .select("checked_out_at")
+    .eq("student_id", student.id)
+    .eq("date", todayISO())
+    .maybeSingle() ?? { data: null };
 
   const xp = stats?.xp_points ?? 0;
   const level = stats?.level ?? 1;
@@ -99,7 +107,16 @@ export default async function StudentDashboard() {
         </div>
       </div>
 
-      <CheckInButton />
+      <div className="rounded-xl border border-kaizen-red/30 bg-gradient-to-br from-kaizen-red/10 to-kaizen-black p-6 text-center">
+        <p className="font-display text-sm tracking-widest text-gold">WEEKLY GOAL</p>
+        <p className="mt-2 text-3xl font-bold streak-fire">{stats?.monthly_visits ?? 0} / 12</p>
+        <p className="mt-1 text-sm text-kaizen-muted">sessions this month</p>
+      </div>
+
+      <TrainTodayButton
+        initialCheckedIn={Boolean(todayAttendance)}
+        initialCheckedOut={Boolean(todayAttendance?.checked_out_at)}
+      />
     </div>
   );
 }

@@ -2,24 +2,33 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/access";
+import { requirePermission } from "@/lib/permissions-server";
 import { logAudit } from "@/lib/audit";
 import { recordPayment } from "@/lib/payments";
 import { createMembership } from "@/lib/memberships";
 import type { PaymentMethod } from "@/lib/types";
 
 export async function recordPaymentAction(formData: FormData) {
-  const profile = await requireAdmin();
+  const profile = await requirePermission("create_edit_payments");
+
+  const amount = Number(formData.get("amount"));
+  const amountPaid = formData.get("amount_paid") ? Number(formData.get("amount_paid")) : amount;
+  const paymentStatus = String(formData.get("payment_status") || "PAID");
+  const dueDate = String(formData.get("due_date") || "") || null;
 
   const payment = await recordPayment({
     student_id: String(formData.get("student_id")),
-    amount: Number(formData.get("amount")),
+    amount,
     method: String(formData.get("method")) as PaymentMethod,
     reference_number: String(formData.get("reference_number") || "") || undefined,
     membership_id: String(formData.get("membership_id") || "") || undefined,
     locker_rental_id: String(formData.get("locker_rental_id") || "") || undefined,
     payment_type: String(formData.get("payment_type") || "membership"),
     notes: String(formData.get("notes") || "") || undefined,
+    due_date: dueDate ?? undefined,
+    payment_status: paymentStatus as "PAID" | "UNPAID" | "PARTIAL" | "OVERDUE",
+    amount_due: formData.get("amount_due") ? Number(formData.get("amount_due")) : amount,
+    amount_paid: amountPaid,
   });
 
   await logAudit({
@@ -35,7 +44,7 @@ export async function recordPaymentAction(formData: FormData) {
 }
 
 export async function createMembershipAction(formData: FormData) {
-  const profile = await requireAdmin();
+  const profile = await requirePermission("create_edit_students");
 
   const membership = await createMembership({
     student_id: String(formData.get("student_id")),
@@ -59,7 +68,7 @@ export async function createMembershipAction(formData: FormData) {
 }
 
 export async function createLockerAction(formData: FormData) {
-  const profile = await requireAdmin();
+  const profile = await requirePermission("view_students");
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -80,7 +89,7 @@ export async function createLockerAction(formData: FormData) {
 }
 
 export async function assignLockerAction(formData: FormData) {
-  const profile = await requireAdmin();
+  const profile = await requirePermission("view_students");
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -108,12 +117,26 @@ export async function assignLockerAction(formData: FormData) {
 }
 
 export async function adminCheckInAction(studentId: string) {
-  const profile = await requireAdmin();
+  const profile = await requirePermission("view_students");
   const { checkInStudent } = await import("@/lib/attendance");
   const result = await checkInStudent(studentId, "ADMIN_OVERRIDE");
   await logAudit({
     userId: profile.id,
     action: "CHECK_IN",
+    entityType: "attendance",
+    entityId: studentId,
+  });
+  revalidatePath("/admin/attendance");
+  return result;
+}
+
+export async function adminCheckOutAction(studentId: string) {
+  const profile = await requirePermission("view_students");
+  const { checkOutStudent } = await import("@/lib/attendance");
+  const result = await checkOutStudent(studentId);
+  await logAudit({
+    userId: profile.id,
+    action: "CHECK_OUT",
     entityType: "attendance",
     entityId: studentId,
   });
