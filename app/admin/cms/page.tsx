@@ -55,9 +55,13 @@ export default async function CmsPage() {
           <h3 className="font-display text-lg text-gold">Coaches</h3>
           <p className="mt-2 text-sm text-kaizen-muted">Coach bios and photos on /coaches</p>
         </Link>
-        <Link href="/admin/programs" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
-          <h3 className="font-display text-lg text-gold">Schedule</h3>
-          <p className="mt-2 text-sm text-kaizen-muted">Class schedule via program schedules</p>
+        <Link href="/admin/cms/media" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
+          <h3 className="font-display text-lg text-gold">Media &amp; Photos</h3>
+          <p className="mt-2 text-sm text-kaizen-muted">Hero, gallery, coach photos — click to change</p>
+        </Link>
+        <Link href="/admin/pricing" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
+          <h3 className="font-display text-lg text-gold">Pricing</h3>
+          <p className="mt-2 text-sm text-kaizen-muted">Public pricing tiers on /pricing</p>
         </Link>
       </div>
 

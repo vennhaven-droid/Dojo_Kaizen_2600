@@ -12,14 +12,15 @@ export interface CheckInResult {
 
 export async function checkInStudent(
   studentId: string,
-  method: CheckInMethod = "LOGIN"
+  method: CheckInMethod = "LOGIN",
+  date?: string
 ): Promise<CheckInResult> {
   const supabase = createAdminClient() ?? (await createClient());
   if (!supabase) {
     return { success: false, message: "Database not configured" };
   }
 
-  const today = todayISO();
+  const today = date ?? todayISO();
 
   const { data: existing } = await supabase
     .from("attendance")

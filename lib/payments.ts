@@ -86,7 +86,7 @@ export async function getAccountsReceivable() {
   const overdue = memberships.filter((m) => m.due_date && m.due_date < today);
 
   const totalOutstanding = overdue.reduce(
-    (sum, m) => sum + Number(m.custom_rate ?? m.programs?.default_price ?? 0),
+    (sum, m) => sum + Number(m.custom_rate ?? 0),
     0
   );
 
@@ -146,7 +146,6 @@ export async function getStudentBalance(studentId: string) {
     .lt("due_date", today);
 
   return (data ?? []).reduce((sum, m) => {
-    const programs = m.programs as { default_price?: number } | null;
-    return sum + Number(m.custom_rate ?? programs?.default_price ?? 0);
+    return sum + Number(m.custom_rate ?? 0);
   }, 0);
 }

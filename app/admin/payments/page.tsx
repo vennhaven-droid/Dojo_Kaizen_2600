@@ -1,9 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getAccountsReceivable } from "@/lib/payments";
-import { recordPaymentAction } from "../actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { RecordPaymentForm } from "@/components/admin/record-payment-form";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatPeso } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +10,11 @@ export default async function PaymentsPage() {
   const [ar, { data: students }, { data: recentPayments }] = await Promise.all([
     getAccountsReceivable(),
     supabase?.from("students").select("id, first_name, last_name").eq("status", "ACTIVE").order("last_name") ?? { data: [] },
-    supabase?.from("payments").select("*, students(first_name, last_name)").order("paid_at", { ascending: false }).limit(20) ?? { data: [] },
+    supabase
+      ?.from("payments")
+      .select("*, students(first_name, last_name), memberships(type, programs(name))")
+      .order("paid_at", { ascending: false })
+      .limit(20) ?? { data: [] },
   ]);
 
   return (
@@ -40,56 +41,17 @@ export default async function PaymentsPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <form action={recordPaymentAction} className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 space-y-4">
-          <h3 className="font-display text-lg text-gold">Record Payment</h3>
-          <div className="space-y-1.5">
-            <Label>Student</Label>
-            <select name="student_id" required className="flex h-11 w-full rounded-md border border-blue/20 bg-kaizen-black px-3 text-sm">
-              <option value="">Select student</option>
-              {(students ?? []).map((s) => (
-                <option key={s.id} value={s.id}>{s.first_name} {s.last_name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5"><Label>Amount</Label><Input name="amount" type="number" step="0.01" required /></div>
-            <div className="space-y-1.5"><Label>Amount Paid</Label><Input name="amount_paid" type="number" step="0.01" /></div>
-            <div className="space-y-1.5"><Label>Amount Due</Label><Input name="amount_due" type="number" step="0.01" /></div>
-            <div className="space-y-1.5"><Label>Due Date</Label><Input name="due_date" type="date" /></div>
-            <div className="space-y-1.5">
-              <Label>Status</Label>
-              <select name="payment_status" className="flex h-11 w-full rounded-md border border-blue/20 bg-kaizen-black px-3 text-sm">
-                <option value="PAID">Paid</option>
-                <option value="UNPAID">Unpaid</option>
-                <option value="PARTIAL">Partial</option>
-                <option value="OVERDUE">Overdue</option>
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Method</Label>
-              <select name="method" className="flex h-11 w-full rounded-md border border-blue/20 bg-kaizen-black px-3 text-sm">
-                <option value="CASH">Cash</option>
-                <option value="GCASH">GCash</option>
-                <option value="BANK_TRANSFER">Bank Transfer</option>
-                <option value="CARD">Card</option>
-                <option value="OTHER">Other</option>
-              </select>
-            </div>
-          </div>
-          <div className="space-y-1.5"><Label>Reference #</Label><Input name="reference_number" /></div>
-          <div className="space-y-1.5"><Label>Notes</Label><Input name="notes" /></div>
-          <Button type="submit" variant="gold">Record Payment</Button>
-        </form>
+        <RecordPaymentForm students={students ?? []} />
 
         <div className="rounded-xl border border-blue/20 bg-kaizen-dark p-6">
           <h3 className="font-display text-lg text-gold mb-4">Overdue Accounts</h3>
           <ul className="space-y-2 text-sm max-h-64 overflow-y-auto">
             {ar.overdue.map((m) => {
               const student = m.students as { first_name?: string; last_name?: string } | null;
-              const program = m.programs as { name?: string; default_price?: number } | null;
+              const program = m.programs as { name?: string } | null;
               return (
                 <li key={m.id} className="flex justify-between border-b border-blue/10 pb-2">
-                  <span>{student?.first_name} {student?.last_name} · {program?.name}</span>
+                  <span>{student?.first_name} {student?.last_name} · {program?.name} · {m.type}</span>
                   <Badge variant="danger">Due {m.due_date}</Badge>
                 </li>
               );
@@ -104,6 +66,7 @@ export default async function PaymentsPage() {
             <TableRow>
               <TableHead>Date</TableHead>
               <TableHead>Student</TableHead>
+              <TableHead>Program / Type</TableHead>
               <TableHead>Method</TableHead>
               <TableHead>Amount</TableHead>
             </TableRow>
@@ -111,10 +74,14 @@ export default async function PaymentsPage() {
           <TableBody>
             {(recentPayments ?? []).map((p) => {
               const student = p.students as { first_name?: string; last_name?: string } | null;
+              const membership = p.memberships as { type?: string; programs?: { name?: string } } | null;
               return (
                 <TableRow key={p.id}>
-                  <TableCell>{new Date(p.paid_at).toLocaleDateString()}</TableCell>
+                  <TableCell>{p.paid_at ? new Date(p.paid_at).toLocaleDateString() : p.due_date ?? "—"}</TableCell>
                   <TableCell>{student?.first_name} {student?.last_name}</TableCell>
+                  <TableCell>
+                    {membership?.programs?.name ?? "—"} {membership?.type ? `· ${membership.type}` : ""}
+                  </TableCell>
                   <TableCell>{p.method}</TableCell>
                   <TableCell className="text-gold">{formatPeso(Number(p.amount))}</TableCell>
                 </TableRow>

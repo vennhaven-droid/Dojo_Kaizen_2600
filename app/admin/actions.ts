@@ -116,10 +116,49 @@ export async function assignLockerAction(formData: FormData) {
   revalidatePath("/admin/lockers");
 }
 
-export async function adminCheckInAction(studentId: string) {
+export async function bulkCreateLockersAction(formData: FormData) {
+  const profile = await requirePermission("view_students");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+
+  const start = Number(formData.get("start_number") || 1);
+  const count = Number(formData.get("count") || 30);
+  const fee = Number(formData.get("monthly_fee") || 500);
+
+  const rows = Array.from({ length: count }, (_, i) => ({
+    number: String(start + i),
+    monthly_fee: fee,
+    status: "AVAILABLE" as const,
+  }));
+
+  const { error } = await supabase.from("lockers").insert(rows);
+  if (error) throw new Error(error.message);
+
+  await logAudit({ userId: profile.id, action: "CREATE", entityType: "locker_bulk", entityId: "bulk" });
+  revalidatePath("/admin/lockers");
+}
+
+export async function releaseLockerAction(lockerId: string) {
+  const profile = await requirePermission("view_students");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+
+  await supabase
+    .from("locker_rentals")
+    .update({ status: "EXPIRED" })
+    .eq("locker_id", lockerId)
+    .eq("status", "OCCUPIED");
+
+  await supabase.from("lockers").update({ status: "AVAILABLE" }).eq("id", lockerId);
+
+  await logAudit({ userId: profile.id, action: "RELEASE", entityType: "locker", entityId: lockerId });
+  revalidatePath("/admin/lockers");
+}
+
+export async function adminCheckInAction(studentId: string, date?: string) {
   const profile = await requirePermission("view_students");
   const { checkInStudent } = await import("@/lib/attendance");
-  const result = await checkInStudent(studentId, "ADMIN_OVERRIDE");
+  const result = await checkInStudent(studentId, "ADMIN_OVERRIDE", date);
   await logAudit({
     userId: profile.id,
     action: "CHECK_IN",
