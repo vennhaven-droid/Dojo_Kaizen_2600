@@ -133,9 +133,31 @@ export async function getCmsPricing() {
     .from("cms_pricing")
     .select("*")
     .eq("is_published", true)
+    .order("category")
     .order("sort_order");
   if (!data?.length) return [...FALLBACK_PRICING];
   return data;
+}
+
+export async function getCmsPricingAdmin() {
+  const supabase = await createClient();
+  if (!supabase) return [...FALLBACK_PRICING];
+  const { data } = await supabase
+    .from("cms_pricing")
+    .select("*")
+    .order("category")
+    .order("sort_order");
+  return data?.length ? data : [...FALLBACK_PRICING];
+}
+
+export async function getPricingPageCms() {
+  const page = await getCmsPage("pricing");
+  const sections = (page?.sections ?? {}) as Record<string, unknown>;
+  const customCta = (sections.customCta ?? {}) as { title?: string; description?: string };
+  return {
+    title: customCta.title,
+    description: customCta.description,
+  };
 }
 
 export async function getCmsTestimonials() {

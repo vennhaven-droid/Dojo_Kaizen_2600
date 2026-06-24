@@ -151,6 +151,8 @@ export async function createPricingTierAction(formData: FormData) {
     description: String(formData.get("description") || "") || null,
     price: Number(formData.get("price")),
     billing_period: String(formData.get("billing_period") || "monthly"),
+    category: String(formData.get("category") || "group_classes"),
+    note: String(formData.get("note") || "") || null,
     features,
     is_promoted: formData.get("is_promoted") === "on",
     sort_order: Number(formData.get("sort_order") || 0),
@@ -178,12 +180,80 @@ export async function updatePricingTierAction(id: string, formData: FormData) {
       description: String(formData.get("description") || "") || null,
       price: Number(formData.get("price")),
       billing_period: String(formData.get("billing_period") || "monthly"),
+      category: String(formData.get("category") || "group_classes"),
+      note: String(formData.get("note") || "") || null,
       features,
       is_promoted: formData.get("is_promoted") === "on",
       sort_order: Number(formData.get("sort_order") || 0),
       is_published: formData.get("is_published") === "on",
     })
     .eq("id", id);
+
+  revalidatePath("/admin/pricing");
+  revalidatePath("/pricing");
+}
+
+export async function deletePricingTierAction(id: string) {
+  await requirePermission("manage_pricing");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  await supabase.from("cms_pricing").delete().eq("id", id);
+  revalidatePath("/admin/pricing");
+  revalidatePath("/pricing");
+}
+
+export async function resetPricingToDefaultsAction() {
+  await requirePermission("manage_pricing");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  const { DEFAULT_PRICING_TIERS } = await import("@/lib/pricing");
+  await supabase.from("cms_pricing").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  await supabase.from("cms_pricing").insert(
+    DEFAULT_PRICING_TIERS.map((t) => ({
+      title: t.title,
+      price: t.price,
+      billing_period: t.billing_period,
+      category: t.category,
+      note: t.note ?? null,
+      features: [],
+      is_promoted: t.is_promoted ?? false,
+      sort_order: t.sort_order ?? 0,
+      is_published: true,
+    }))
+  );
+  revalidatePath("/admin/pricing");
+  revalidatePath("/pricing");
+}
+
+export async function updatePricingCtaAction(formData: FormData) {
+  await requirePermission("manage_pricing");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+
+  const customCta = {
+    title: String(formData.get("cta_title")),
+    description: String(formData.get("cta_description")),
+  };
+
+  const { data: existing } = await supabase.from("cms_pages").select("sections").eq("slug", "pricing").single();
+
+  if (existing) {
+    const sections = (existing.sections ?? {}) as Record<string, unknown>;
+    await supabase
+      .from("cms_pages")
+      .update({
+        sections: { ...sections, customCta },
+        updated_at: new Date().toISOString(),
+      })
+      .eq("slug", "pricing");
+  } else {
+    await supabase.from("cms_pages").insert({
+      slug: "pricing",
+      title: "Pricing",
+      sections: { customCta },
+      is_published: true,
+    });
+  }
 
   revalidatePath("/admin/pricing");
   revalidatePath("/pricing");
