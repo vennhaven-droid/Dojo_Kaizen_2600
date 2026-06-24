@@ -3,6 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requirePermission } from "@/lib/permissions-server";
+import {
+  bootstrapCmsMedia,
+  setHomeBanner,
+  setHomeSectionField,
+  setProgramHighlight,
+} from "@/lib/cms-bootstrap";
 
 export async function updateCmsPage(slug: string, sections: Record<string, unknown>) {
   await requirePermission("manage_content");
@@ -188,15 +194,16 @@ export async function updateCoachAction(coachId: string, formData: FormData) {
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
-  const { error } = await supabase
-    .from("coaches")
-    .update({
-      bio: String(formData.get("bio") || "") || null,
-      experience: String(formData.get("experience") || "") || null,
-      photo_url: String(formData.get("photo_url") || "") || null,
-      is_active: formData.get("is_active") === "on",
-    })
-    .eq("id", coachId);
+  const payload: Record<string, unknown> = {
+    bio: String(formData.get("bio") || "") || null,
+    experience: String(formData.get("experience") || "") || null,
+    photo_url: String(formData.get("photo_url") || "") || null,
+    is_active: formData.get("is_active") === "on",
+  };
+  const displayName = String(formData.get("display_name") || "").trim();
+  if (displayName) payload.display_name = displayName;
+
+  const { error } = await supabase.from("coaches").update(payload).eq("id", coachId);
 
   if (error) throw new Error(error.message);
   revalidatePath("/admin/coaches");
@@ -205,17 +212,20 @@ export async function updateCoachAction(coachId: string, formData: FormData) {
 }
 
 export async function uploadMarketingImage(formData: FormData) {
-  await requirePermission("manage_media");
   const { uploadMarketingMedia } = await import("@/lib/storage");
   const file = formData.get("file") as File | null;
   if (!file || file.size === 0) throw new Error("No file provided");
-  const url = await uploadMarketingMedia(file);
-  return url;
+  return uploadMarketingMedia(file);
+}
+
+async function uploadMarketingImageWithPermission(formData: FormData) {
+  await requirePermission("manage_media");
+  return uploadMarketingImage(formData);
 }
 
 export async function updateHeroImageAction(formData: FormData) {
   await requirePermission("manage_media");
-  const url = await uploadMarketingImage(formData);
+  const url = await uploadMarketingImageWithPermission(formData);
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -232,7 +242,7 @@ export async function updateHeroImageAction(formData: FormData) {
 
 export async function addGalleryImageAction(formData: FormData) {
   await requirePermission("manage_media");
-  const url = await uploadMarketingImage(formData);
+  const url = await uploadMarketingImageWithPermission(formData);
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
@@ -248,7 +258,7 @@ export async function addGalleryImageAction(formData: FormData) {
 }
 
 export async function updateCoachPhotoAction(coachId: string, formData: FormData) {
-  await requirePermission("manage_media");
+  await requirePermission("manage_coaches");
   const url = await uploadMarketingImage(formData);
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
@@ -264,6 +274,76 @@ export async function deleteGalleryImageAction(id: string) {
   if (!supabase) throw new Error("Database not configured");
   await supabase.from("cms_gallery").delete().eq("id", id);
   revalidatePath("/admin/cms/media");
+  revalidatePath("/");
+}
+
+export async function updateLogoAction(formData: FormData) {
+  await requirePermission("manage_media");
+  const url = await uploadMarketingImageWithPermission(formData);
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  const { data: existing } = await supabase.from("site_settings").select("id").limit(1).single();
+  if (existing) {
+    await supabase.from("site_settings").update({ logo_url: url }).eq("id", existing.id);
+  } else {
+    await supabase.from("site_settings").insert({ academy_name: "Dojo Kaizen Martial Arts 2600", logo_url: url });
+  }
+  revalidatePath("/");
+  revalidatePath("/admin/cms/media");
+}
+
+export async function updateKaizenWayImageAction(formData: FormData) {
+  await requirePermission("manage_media");
+  const url = await uploadMarketingImageWithPermission(formData);
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  await setHomeSectionField(supabase, "kaizenWayImageUrl", url);
+  revalidatePath("/");
+  revalidatePath("/admin/cms/media");
+}
+
+export async function updateProgramHighlightAction(formData: FormData) {
+  await requirePermission("manage_media");
+  const url = await uploadMarketingImageWithPermission(formData);
+  const index = Number(formData.get("index") ?? 0);
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  await setProgramHighlight(supabase, index, url);
+  revalidatePath("/");
+  revalidatePath("/admin/cms/media");
+}
+
+export async function updatePageBannerAction(formData: FormData) {
+  await requirePermission("manage_media");
+  const url = await uploadMarketingImageWithPermission(formData);
+  const slug = String(formData.get("banner") ?? "");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  await setHomeBanner(supabase, slug, url);
+  revalidatePath("/");
+  revalidatePath("/admin/cms/media");
+  revalidatePath(`/${slug === "facility" ? "contact" : slug}`);
+}
+
+export async function updateGalleryImageAction(galleryId: string, formData: FormData) {
+  await requirePermission("manage_media");
+  const url = await uploadMarketingImageWithPermission(formData);
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  await supabase.from("cms_gallery").update({ image_url: url }).eq("id", galleryId);
+  revalidatePath("/admin/cms/media");
+  revalidatePath("/");
+}
+
+export async function syncDefaultMediaAction() {
+  await requirePermission("manage_media");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  await bootstrapCmsMedia(supabase);
+  revalidatePath("/admin/cms/media");
+  revalidatePath("/admin/coaches");
+  revalidatePath("/");
+  revalidatePath("/coaches");
 }
 
 export async function createCompetitionAction(formData: FormData) {

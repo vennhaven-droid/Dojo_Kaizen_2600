@@ -7,7 +7,12 @@ import { ProgramHighlightCarousel } from "@/components/marketing/program-highlig
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { BRAND, MARKETING_IMAGES } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
-import { getCmsPage, getSiteSettings } from "@/lib/cms";
+import {
+  getGalleryImageUrls,
+  getHomeSections,
+  getLogoUrl,
+  getSiteSettings,
+} from "@/lib/cms";
 
 export const metadata = pageMetadata(
   "Home",
@@ -15,11 +20,14 @@ export const metadata = pageMetadata(
 );
 
 export default async function HomePage() {
-  const [page, settings] = await Promise.all([getCmsPage("home"), getSiteSettings()]);
+  const [sections, settings, galleryImages, logoUrl] = await Promise.all([
+    getHomeSections(),
+    getSiteSettings(),
+    getGalleryImageUrls(),
+    getLogoUrl(),
+  ]);
 
-  const sections = (page?.sections ?? {}) as Record<string, unknown>;
-  const hero = (sections.hero ?? {}) as Record<string, string>;
-  const aboutPreview = (sections.about_preview ?? {}) as Record<string, string>;
+  const { hero, about_preview, kaizenWayImageUrl, programHighlights } = sections;
 
   return (
     <>
@@ -29,14 +37,16 @@ export default async function HomePage() {
           hero.subheadline ??
           "Muay Thai, MMA, Boxing & Brazilian Jiu-Jitsu in Baguio City. Discipline. Respect. Continuous improvement."
         }
-        primaryCta="Enroll Now"
+        primaryCta={hero.primaryCta ?? "Enroll Now"}
+        secondaryCta={hero.secondaryCta ?? "View Schedule"}
         imageUrl={hero.imageUrl ?? MARKETING_IMAGES.hero}
+        logoUrl={logoUrl}
       />
 
       <section className="overflow-hidden border-y border-blue/20 bg-kaizen-black/50 px-4 py-20 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <FadeIn><SectionHeading title="Training Gallery" subtitle="Life at the dojo" /></FadeIn>
-          <GalleryMarquee images={MARKETING_IMAGES.gallery} />
+          <GalleryMarquee images={galleryImages} />
         </div>
       </section>
 
@@ -45,7 +55,7 @@ export default async function HomePage() {
           <FadeIn>
             <div className="relative mx-auto aspect-square max-w-sm overflow-hidden rounded-2xl bg-kaizen-black ring-2 ring-kaizen-red/30">
               <MarketingImage
-                src={MARKETING_IMAGES.kaizenWay}
+                src={kaizenWayImageUrl}
                 alt="Dojo Kaizen logo"
                 fill
                 className="object-contain p-8"
@@ -53,9 +63,9 @@ export default async function HomePage() {
             </div>
           </FadeIn>
           <FadeIn delay={0.15}>
-            <SectionHeading title={aboutPreview.title ?? "THE KAIZEN WAY"} align="left" />
+            <SectionHeading title={about_preview.title ?? "THE KAIZEN WAY"} align="left" />
             <p className="mt-6 text-lg text-kaizen-silver leading-relaxed">
-              {aboutPreview.content ??
+              {about_preview.content ??
                 "At Dojo Kaizen, martial arts is a journey of continuous improvement. Every session is an opportunity to become stronger, sharper, and more disciplined."}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
@@ -75,7 +85,7 @@ export default async function HomePage() {
       <section className="px-4 py-20 sm:px-6">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
           <FadeIn>
-            <ProgramHighlightCarousel images={MARKETING_IMAGES.programHighlights} />
+            <ProgramHighlightCarousel images={programHighlights} />
           </FadeIn>
           <FadeIn delay={0.15}>
             <SectionHeading

@@ -67,7 +67,17 @@ export default async function CmsPage() {
 
       <div className="rounded-xl border border-blue/20 bg-kaizen-dark p-6">
         <h3 className="font-display text-lg text-gold mb-4">Gallery ({gallery.length} items)</h3>
-        <p className="text-sm text-kaizen-muted">Gallery images are managed in Supabase cms_gallery. Upload media via Supabase Storage bucket marketing-media.</p>
+        <p className="text-sm text-kaizen-muted mb-4">
+          Manage gallery photos on the <Link href="/admin/cms/media" className="text-blue hover:underline">Media &amp; Photos</Link> page.
+        </p>
+        {gallery.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {gallery.slice(0, 5).map((item) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={item.id} src={item.image_url} alt={item.title ?? ""} className="h-16 w-16 rounded object-cover" />
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="rounded-xl border border-blue/20 bg-kaizen-dark p-6">

@@ -1,5 +1,5 @@
-import { MARKETING_PROGRAMS, MARKETING_IMAGES } from "@/lib/brand";
-import { getCmsPrograms } from "@/lib/cms";
+import { MARKETING_PROGRAMS } from "@/lib/brand";
+import { getCmsPrograms, getPageBanner } from "@/lib/cms";
 import { ProgramCard } from "@/components/marketing/program-card";
 import { StaggerChildren, StaggerItem } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
@@ -11,7 +11,7 @@ export const metadata = pageMetadata(
 );
 
 export default async function ProgramsPage() {
-  const cmsPrograms = await getCmsPrograms();
+  const [cmsPrograms, bannerUrl] = await Promise.all([getCmsPrograms(), getPageBanner("programs")]);
   const programs =
     cmsPrograms.length > 0
       ? cmsPrograms.map((p) => ({
@@ -25,7 +25,7 @@ export default async function ProgramsPage() {
       <PageBanner
         title="Training Programs"
         subtitle="Muay Thai, MMA, Boxing, kids programs, self-defense, and one-on-one coaching."
-        imageUrl={MARKETING_IMAGES.programs}
+        imageUrl={bannerUrl}
       />
       <div className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">

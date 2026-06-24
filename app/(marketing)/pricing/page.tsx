@@ -1,12 +1,10 @@
 import Link from "next/link";
-import { getCmsPricing } from "@/lib/cms";
+import { getCmsPricing, getPageBanner } from "@/lib/cms";
 import { formatPeso } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
-import { MARKETING_IMAGES } from "@/lib/brand";
-
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata(
@@ -15,11 +13,11 @@ export const metadata = pageMetadata(
 );
 
 export default async function PricingPage() {
-  const tiers = await getCmsPricing();
+  const [tiers, bannerUrl] = await Promise.all([getCmsPricing(), getPageBanner("pricing")]);
 
   return (
     <>
-      <PageBanner title="Pricing" subtitle="Flexible options for every training style" imageUrl={MARKETING_IMAGES.programs} />
+      <PageBanner title="Pricing" subtitle="Flexible options for every training style" imageUrl={bannerUrl} />
       <div className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

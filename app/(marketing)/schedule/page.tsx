@@ -1,6 +1,6 @@
 import { PageBanner } from "@/components/marketing/hero-section";
 import { ScheduleBoard } from "@/components/marketing/schedule-board";
-import { MARKETING_IMAGES } from "@/lib/brand";
+import { getPageBanner } from "@/lib/cms";
 import { getProgramSchedules } from "@/lib/cms";
 import { pageMetadata } from "@/lib/seo";
 
@@ -12,7 +12,7 @@ export const metadata = pageMetadata(
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default async function SchedulePage() {
-  const schedules = await getProgramSchedules();
+  const [schedules, bannerUrl] = await Promise.all([getProgramSchedules(), getPageBanner("schedule")]);
   const dbEntries =
     schedules.length > 0
       ? schedules.map((s) => {
@@ -35,7 +35,7 @@ export default async function SchedulePage() {
       <PageBanner
         title="Weekly Class Schedule"
         subtitle="Morning fundamentals, kids programs, striking mastery, and evening fight team training."
-        imageUrl={MARKETING_IMAGES.hero}
+        imageUrl={bannerUrl}
       />
       <div className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-5xl">

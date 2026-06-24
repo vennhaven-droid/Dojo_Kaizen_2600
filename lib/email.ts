@@ -48,11 +48,13 @@ export function enrollmentNotification(data: {
   lastName: string;
   program: string;
   phone: string;
+  email: string;
 }) {
   return `
     <h1>New Enrollment Lead</h1>
     <p><strong>${data.firstName} ${data.lastName}</strong> is interested in ${data.program}.</p>
     <p>Phone: ${data.phone}</p>
+    <p>Email: ${data.email}</p>
   `;
 }
 

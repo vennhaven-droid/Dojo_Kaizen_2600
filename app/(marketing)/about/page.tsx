@@ -1,9 +1,9 @@
-import { getCmsPage } from "@/lib/cms";
+import { getCmsPage, getLogoUrl, getPageBanner } from "@/lib/cms";
 import { FadeIn, SectionHeading } from "@/components/marketing/motion";
 import { PageBanner } from "@/components/marketing/hero-section";
 import { MarketingImage } from "@/components/marketing/marketing-image";
 import { SocialLinks } from "@/components/marketing/social-links";
-import { BRAND, LOGO_SRC, MARKETING_IMAGES } from "@/lib/brand";
+import { BRAND } from "@/lib/brand";
 
 import { pageMetadata } from "@/lib/seo";
 
@@ -13,7 +13,11 @@ export const metadata = pageMetadata(
 );
 
 export default async function AboutPage() {
-  const page = await getCmsPage("about");
+  const [page, bannerUrl, logoUrl] = await Promise.all([
+    getCmsPage("about"),
+    getPageBanner("about"),
+    getLogoUrl(),
+  ]);
   const sections = (page?.sections ?? {}) as Record<string, unknown>;
   const values = (sections.values ?? []) as string[];
 
@@ -22,14 +26,14 @@ export default async function AboutPage() {
       <PageBanner
         title="About Dojo Kaizen"
         subtitle="Discipline. Respect. Continuous Improvement — in the heart of Baguio City."
-        imageUrl={MARKETING_IMAGES.about}
+        imageUrl={bannerUrl}
       />
       <div className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-5xl">
           <div className="mb-12 grid gap-8 lg:grid-cols-2">
             <FadeIn>
               <div className="relative mx-auto aspect-square max-w-sm overflow-hidden rounded-2xl bg-kaizen-black ring-2 ring-blue/30">
-                <MarketingImage src={LOGO_SRC} alt="Dojo Kaizen logo" fill className="object-contain p-10" />
+                <MarketingImage src={logoUrl} alt="Dojo Kaizen logo" fill className="object-contain p-10" />
               </div>
             </FadeIn>
             <FadeIn delay={0.1}>

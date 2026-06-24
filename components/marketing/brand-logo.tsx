@@ -8,9 +8,10 @@ type BrandLogoProps = {
   size?: number;
   className?: string;
   priority?: boolean;
+  src?: string;
 };
 
-export function BrandLogo({ size = 48, className, priority }: BrandLogoProps) {
+export function BrandLogo({ size = 48, className, priority, src = LOGO_SRC }: BrandLogoProps) {
   return (
     <div
       className={cn(
@@ -20,7 +21,7 @@ export function BrandLogo({ size = 48, className, priority }: BrandLogoProps) {
       style={{ width: size, height: size }}
     >
       <MarketingImage
-        src={LOGO_SRC}
+        src={src}
         alt="Dojo Kaizen Martial Arts 2600"
         width={size}
         height={size}

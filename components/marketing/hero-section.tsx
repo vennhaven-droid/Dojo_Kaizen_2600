@@ -9,14 +9,18 @@ type HeroSectionProps = {
   headline?: string;
   subheadline?: string;
   primaryCta?: string;
+  secondaryCta?: string;
   imageUrl?: string;
+  logoUrl?: string;
 };
 
 export function HeroSection({
   headline = "TRAIN HARD. IMPROVE EVERYDAY.",
   subheadline = "Muay Thai, MMA, Boxing & Brazilian Jiu-Jitsu in Baguio City. Discipline. Respect. Continuous improvement.",
   primaryCta = "Enroll Now",
+  secondaryCta = "View Schedule",
   imageUrl = MARKETING_IMAGES.hero,
+  logoUrl = LOGO_SRC,
 }: HeroSectionProps) {
   return (
     <section className="relative min-h-[90vh] overflow-hidden">
@@ -37,7 +41,7 @@ export function HeroSection({
         <FadeIn>
           <div className="mb-8">
             <MarketingImage
-              src={LOGO_SRC}
+              src={logoUrl}
               alt="Dojo Kaizen logo"
               width={180}
               height={180}
@@ -55,7 +59,7 @@ export function HeroSection({
               <Link href="/enroll">{primaryCta}</Link>
             </Button>
             <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto sm:min-w-[180px]">
-              <Link href="/schedule">View Schedule</Link>
+              <Link href="/schedule">{secondaryCta}</Link>
             </Button>
           </div>
           <p className="mt-8 text-sm text-kaizen-muted">{BRAND.location}</p>

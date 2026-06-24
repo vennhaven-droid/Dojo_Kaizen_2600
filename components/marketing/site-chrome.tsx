@@ -15,12 +15,12 @@ const NAV = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function MarketingHeader() {
+export function MarketingHeader({ logoUrl }: { logoUrl?: string }) {
   return (
     <header className="sticky top-0 z-50 border-b border-kaizen-red/20 bg-kaizen-black/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/" className="flex min-w-0 items-center gap-3">
-          <BrandLogo size={52} priority />
+          <BrandLogo size={52} priority src={logoUrl} />
           <div className="hidden sm:block">
             <p className="font-hero text-sm font-bold text-gold leading-tight tracking-wide">
               {BRAND.tagline}
@@ -55,14 +55,14 @@ export function MarketingHeader() {
   );
 }
 
-export function MarketingFooter() {
+export function MarketingFooter({ logoUrl }: { logoUrl?: string }) {
   return (
     <footer className="border-t border-kaizen-red/20 bg-kaizen-dark">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
             <div className="mb-4 flex items-center gap-3">
-              <BrandLogo size={44} />
+              <BrandLogo size={44} src={logoUrl} />
               <span className="font-hero text-sm font-bold text-gold">{BRAND.shortName}</span>
             </div>
             <p className="text-sm text-kaizen-muted leading-relaxed">
