@@ -8,6 +8,7 @@ import { BRAND } from "@/lib/brand";
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
+  { href: "/facility", label: "Facility" },
   { href: "/programs", label: "Programs" },
   { href: "/coaches", label: "Coaches" },
   { href: "/schedule", label: "Schedule" },
@@ -42,11 +43,14 @@ export function MarketingHeader({ logoUrl }: { logoUrl?: string }) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+          <Button asChild variant="outline" size="sm" className="hidden min-h-10 sm:inline-flex">
             <Link href="/login">Login</Link>
           </Button>
-          <Button asChild variant="gold" size="sm" className="hidden sm:inline-flex shadow-md shadow-gold/10">
+          <Button asChild variant="gold" size="sm" className="hidden min-h-10 sm:inline-flex shadow-md shadow-gold/10">
             <Link href="/enroll">Enroll Now</Link>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="inline-flex min-h-10 sm:hidden">
+            <Link href="/login">Login</Link>
           </Button>
           <MobileNav items={NAV} />
         </div>
@@ -66,7 +70,7 @@ export function MarketingFooter({ logoUrl }: { logoUrl?: string }) {
               <span className="font-hero text-sm font-bold text-gold">{BRAND.shortName}</span>
             </div>
             <p className="text-sm text-kaizen-muted leading-relaxed">
-              Hard-hitting martial arts training in Baguio City. Muay Thai, Boxing, MMA & BJJ.
+              Hard-hitting martial arts training in Baguio City. Muay Thai, Boxing, Kickboxing, MMA &amp; BJJ.
             </p>
             <SocialLinks className="mt-6" />
           </div>
@@ -75,6 +79,7 @@ export function MarketingFooter({ logoUrl }: { logoUrl?: string }) {
             <ul className="space-y-2 text-sm text-kaizen-muted">
               <li><Link href="/programs" className="hover:text-gold transition-colors">Muay Thai</Link></li>
               <li><Link href="/programs" className="hover:text-gold transition-colors">Boxing</Link></li>
+              <li><Link href="/programs" className="hover:text-gold transition-colors">Kickboxing</Link></li>
               <li><Link href="/programs" className="hover:text-gold transition-colors">MMA</Link></li>
               <li><Link href="/programs" className="hover:text-gold transition-colors">Brazilian Jiu-Jitsu</Link></li>
             </ul>

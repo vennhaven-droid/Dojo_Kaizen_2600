@@ -44,8 +44,46 @@ export const MARKETING_IMAGES = {
     "/images/Home/Program/Program4.jpg",
     "/images/Home/Program/Program5.jpg",
     "/images/Home/Program/Program6.jpg",
+    "https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=800&q=80",
+  ],
+  facilityGallery: [
+    "/images/facility/0292f8fa-eb9a-4f37-99cd-28896564aff5.jpeg",
+    "/images/facility/1b6bab46-6ae0-4e49-9f0e-cc01804cf6d9.jpeg",
+    "/images/facility/232a380e-8649-4482-9721-190a76f8e177.jpeg",
+    "/images/facility/7507d19a-1d4e-4974-9b01-d4c62b8a1e67.jpeg",
+    "/images/facility/78dfa89a-f05b-47ca-b5a1-3a444940c062.jpeg",
+    "/images/facility/92ec33f7-d175-4994-b56d-36bf379836e5.jpeg",
+    "/images/facility/a5c53673-1bd0-4f3c-a365-bf8dedd60196.jpeg",
+    "/images/facility/b1310821-a589-4864-ab2c-521a761f8f2d.jpeg",
+    "/images/facility/b8562d4a-a115-4792-8d43-d12c9f210736.jpeg",
+    "/images/facility/cb248599-8caa-40ec-aed3-a78595baf254.jpeg",
+    "/images/facility/cb6136df-95c2-4f04-ab72-e3dbf35454cd.jpeg",
+    "/images/facility/ceb66aaa-62c0-4368-871d-52bb6e4a76f1.jpeg",
+    "/images/facility/d0a0139a-1cbb-4b47-97d6-002ccbcb9965.jpeg",
+    "/images/facility/dfd96530-f274-46be-ba40-bde2d39503ad.jpeg",
+    "/images/facility/e045c575-340d-40c8-804a-73bcea1ddd5a.jpeg",
+    "/images/facility/f369486d-1242-4c2c-a909-0fafac68cf08.jpeg",
+    "/images/facility/feee4421-56bd-48fc-be06-f413a62d54d6.jpeg",
   ],
 } as const;
+
+export const DEFAULT_PROGRAM_IMAGES: Record<string, string> = {
+  "Muay Thai": "https://images.unsplash.com/photo-1555597677-b303096c6d8f?w=800&q=80",
+  MMA: "https://images.unsplash.com/photo-1549719386-74dfcbf703db?w=800&q=80",
+  Boxing: "https://images.unsplash.com/photo-1517438476312-10d79c0775de?w=800&q=80",
+  Kickboxing: "https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=800&q=80",
+  "Kids Martial Arts": "https://images.unsplash.com/photo-1555597677-0732e8b58f38?w=800&q=80",
+  "Teen Martial Arts": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80",
+  "Self Defense": "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=800&q=80",
+  "Fitness Conditioning": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80",
+  "Private Coaching": "https://images.unsplash.com/photo-1594381898411-846e7d193883?w=800&q=80",
+  "Brazilian Jiu-Jitsu": "https://images.unsplash.com/photo-1583454110551-21f2fee2c41b?w=800&q=80",
+};
+
+export function getProgramImage(name: string, cmsUrl?: string | null): string {
+  if (cmsUrl) return cmsUrl;
+  return DEFAULT_PROGRAM_IMAGES[name] ?? MARKETING_IMAGES.programs;
+}
 
 export const BRAND_COLORS = {
   blue: "#0D74D1",
@@ -126,6 +164,7 @@ export const WEEKLY_SCHEDULE_BLOCKS: ScheduleBlock[] = [
 export const FLYER_PROGRAMS = [
   { name: "Muay Thai", tagline: "Power · Discipline · Confidence" },
   { name: "Boxing", tagline: "Speed · Footwork · Endurance" },
+  { name: "Kickboxing", tagline: "Power · Cardio · Technique" },
   { name: "MMA", tagline: "Striking · Grappling · Conditioning" },
   { name: "Brazilian Jiu-Jitsu", tagline: "Technique · Control · Submissions" },
 ] as const;
@@ -134,6 +173,7 @@ export const MARKETING_PROGRAMS = [
   { name: "Muay Thai", tagline: "Traditional Thai boxing with modern training methods." },
   { name: "MMA", tagline: "Mixed martial arts combining striking and grappling." },
   { name: "Boxing", tagline: "Classic boxing fundamentals and competition prep." },
+  { name: "Kickboxing", tagline: "High-energy kickboxing for fitness and fight conditioning." },
   { name: "Kids Martial Arts", tagline: "Fun, safe martial arts for children ages 5–12." },
   { name: "Teen Martial Arts", tagline: "Dynamic training for teens ages 13–17." },
   { name: "Self Defense", tagline: "Practical self-defense for all skill levels." },
@@ -147,9 +187,6 @@ export const COACHES_TEAM = [
   { name: "Glenn", role: "Coach", bio: "Muay Thai technique and conditioning." },
   { name: "Kenneth", role: "Coach", bio: "MMA and grappling fundamentals." },
   { name: "Ariel", role: "Coach", bio: "Boxing footwork and competition prep." },
-  { name: "Name", role: "Coach", bio: "Profile coming soon." },
-  { name: "Name", role: "Coach", bio: "Profile coming soon." },
-  { name: "Name", role: "Coach", bio: "Profile coming soon." },
 ] as const;
 
 /** Fallback pricing when CMS is empty */

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/permissions-server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ export default async function StudentsPage({
 }: {
   searchParams: Promise<{ q?: string; status?: string }>;
 }) {
+  await requirePermission("view_students");
   const { q, status } = await searchParams;
   const supabase = await createClient();
   let query = supabase?.from("students").select("*, student_stats(total_visits, last_visit), memberships(type, status, programs(name))").order("last_name");

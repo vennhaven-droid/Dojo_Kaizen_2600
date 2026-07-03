@@ -71,16 +71,14 @@ export default async function EnrollmentsPage() {
                     </form>
                   </details>
                   {(lead.status === "NEW" || lead.status === "CONTACTED") && (
-                    <form action={async () => { "use server"; await convertEnrollmentLead(lead.id); }} className="mt-2">
+                    <form action={convertEnrollmentLead.bind(null, lead.id)} className="mt-2">
                       <Button type="submit" size="sm" variant="gold">
                         Convert to student
                       </Button>
                     </form>
                   )}
-                  {lead.status === "ENROLLED" && (
-                    <Link href="/admin/students/new" className="mt-2 inline-block text-xs text-blue hover:underline">
-                      Create student record →
-                    </Link>
+                  {lead.status === "ENROLLED" && lead.notes?.includes("Converted to student") && (
+                    <p className="mt-2 text-xs text-kaizen-muted">{lead.notes}</p>
                   )}
                 </td>
               </tr>

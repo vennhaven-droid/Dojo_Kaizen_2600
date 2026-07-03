@@ -267,7 +267,6 @@ export async function updateCoachAction(coachId: string, formData: FormData) {
   const payload: Record<string, unknown> = {
     bio: String(formData.get("bio") || "") || null,
     experience: String(formData.get("experience") || "") || null,
-    photo_url: String(formData.get("photo_url") || "") || null,
     is_active: formData.get("is_active") === "on",
   };
   const displayName = String(formData.get("display_name") || "").trim();
@@ -316,10 +315,17 @@ export async function addGalleryImageAction(formData: FormData) {
   const supabase = await createClient();
   if (!supabase) throw new Error("Database not configured");
 
+  const category = String(formData.get("category") || "general");
+  const { count } = await supabase
+    .from("cms_gallery")
+    .select("*", { count: "exact", head: true })
+    .eq("category", category);
+
   await supabase.from("cms_gallery").insert({
-    title: String(formData.get("title") || "Gallery"),
+    title: String(formData.get("title") || `Gallery photo ${(count ?? 0) + 1}`),
     image_url: url,
     category: String(formData.get("category") || "general"),
+    sort_order: (count ?? 0) + 1,
     is_published: true,
   });
 
@@ -392,7 +398,103 @@ export async function updatePageBannerAction(formData: FormData) {
   await setHomeBanner(supabase, slug, url);
   revalidatePath("/");
   revalidatePath("/admin/cms/media");
-  revalidatePath(`/${slug === "facility" ? "contact" : slug}`);
+  revalidatePath(`/${slug}`);
+}
+
+export async function updateProgramImageAction(programId: string, formData: FormData) {
+  await requirePermission("manage_programs");
+  const url = await uploadMarketingImageWithPermission(formData);
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+
+  const { data: program } = await supabase.from("programs").select("name, description, sort_order").eq("id", programId).single();
+  if (!program) throw new Error("Program not found");
+
+  const { data: existing } = await supabase.from("cms_programs").select("id").eq("program_id", programId).maybeSingle();
+
+  if (existing) {
+    await supabase.from("cms_programs").update({ image_url: url }).eq("id", existing.id);
+  } else {
+    await supabase.from("cms_programs").insert({
+      program_id: programId,
+      title: program.name,
+      description: program.description,
+      image_url: url,
+      sort_order: program.sort_order ?? 0,
+      is_published: true,
+    });
+  }
+
+  revalidatePath("/programs");
+  revalidatePath(`/admin/programs/${programId}`);
+  revalidatePath("/admin/cms/media");
+}
+
+export async function importFacilityPhotosAction() {
+  await requirePermission("manage_media");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+
+  const { count } = await supabase
+    .from("cms_gallery")
+    .select("*", { count: "exact", head: true })
+    .eq("category", "facility");
+
+  if (count && count > 0) return;
+
+  const { DEFAULT_FACILITY_GALLERY } = await import("@/lib/cms-bootstrap");
+  await supabase.from("cms_gallery").insert(
+    DEFAULT_FACILITY_GALLERY.map((item) => ({
+      ...item,
+      category: "facility",
+      is_published: true,
+    }))
+  );
+
+  revalidatePath("/admin/cms/media");
+  revalidatePath("/facility");
+}
+
+export async function addFacilityImageAction(formData: FormData) {
+  await requirePermission("manage_media");
+  const url = await uploadMarketingImageWithPermission(formData);
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+
+  const { count } = await supabase
+    .from("cms_gallery")
+    .select("*", { count: "exact", head: true })
+    .eq("category", "facility");
+
+  await supabase.from("cms_gallery").insert({
+    title: String(formData.get("title") || `Facility photo ${(count ?? 0) + 1}`),
+    image_url: url,
+    category: "facility",
+    sort_order: (count ?? 0) + 1,
+    is_published: true,
+  });
+
+  revalidatePath("/admin/cms/media");
+  revalidatePath("/facility");
+}
+
+export async function deleteFacilityImageAction(id: string) {
+  await requirePermission("manage_media");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  await supabase.from("cms_gallery").delete().eq("id", id).eq("category", "facility");
+  revalidatePath("/admin/cms/media");
+  revalidatePath("/facility");
+}
+
+export async function updateFacilityImageAction(galleryId: string, formData: FormData) {
+  await requirePermission("manage_media");
+  const url = await uploadMarketingImageWithPermission(formData);
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+  await supabase.from("cms_gallery").update({ image_url: url }).eq("id", galleryId).eq("category", "facility");
+  revalidatePath("/admin/cms/media");
+  revalidatePath("/facility");
 }
 
 export async function updateGalleryImageAction(galleryId: string, formData: FormData) {

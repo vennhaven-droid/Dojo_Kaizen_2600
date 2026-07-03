@@ -126,7 +126,7 @@ export const ADMIN_NAV_PERMISSIONS: Record<string, PermissionFlag | "super_admin
   "/admin/programs": "manage_programs",
   "/admin/coaches": "manage_coaches",
   "/admin/pricing": "manage_pricing",
-  "/admin/users": "super_admin",
+  "/admin/users": "manage_staff",
   "/admin/cms/media": "manage_media",
   "/admin/enrollments": "manage_enrollments",
   "/admin/inquiries": "view_inquiries",

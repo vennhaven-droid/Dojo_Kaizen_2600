@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllCoaches, coachDisplayName } from "@/lib/cms";
 import { createMarketingCoachAction } from "./actions";
+import { FormPhotoField } from "@/components/admin/form-photo-field";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -37,8 +38,7 @@ export default async function CoachesAdminPage() {
           <Textarea name="bio" rows={2} placeholder="Short bio for the website" />
         </div>
         <div className="space-y-1.5">
-          <Label>Photo (optional)</Label>
-          <Input name="file" type="file" accept="image/*" />
+          <FormPhotoField label="Coach photo (optional)" shape="circle" />
         </div>
         <Button type="submit" variant="outline">Add coach profile</Button>
       </form>

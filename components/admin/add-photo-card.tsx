@@ -1,35 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PhotoPicker } from "@/components/admin/photo-picker";
 
-type ImageUploadFieldProps = {
-  name?: string;
-  defaultUrl?: string | null;
+type AddPhotoCardProps = {
   label: string;
   action: (formData: FormData) => Promise<void>;
-  shape?: "square" | "circle" | "wide";
   hiddenFields?: Record<string, string>;
 };
 
-export function ImageUploadField({
-  name = "file",
-  defaultUrl,
-  label,
-  action,
-  shape = "square",
-  hiddenFields = {},
-}: ImageUploadFieldProps) {
+export function AddPhotoCard({ label, action, hiddenFields = {} }: AddPhotoCardProps) {
   const router = useRouter();
-  const [previewUrl, setPreviewUrl] = useState(defaultUrl ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    setPreviewUrl(defaultUrl ?? "");
-  }, [defaultUrl]);
 
   async function uploadFile(file: File) {
     setLoading(true);
@@ -37,28 +22,26 @@ export function ImageUploadField({
     setSaved(false);
     try {
       const fd = new FormData();
-      fd.set(name, file);
+      fd.set("file", file);
       Object.entries(hiddenFields).forEach(([k, v]) => fd.set(k, v));
       await action(fd);
       setSaved(true);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
-      setPreviewUrl(defaultUrl ?? "");
     }
     setLoading(false);
   }
 
   return (
     <PhotoPicker
-      previewUrl={previewUrl}
       label={label}
-      shape={shape}
+      shape="add"
       loading={loading}
       error={error}
       saved={saved}
       emptyText="Add photo"
-      changeText="Change photo"
+      changeText="Upload another"
       onFileSelect={uploadFile}
     />
   );

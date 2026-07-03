@@ -37,3 +37,7 @@ export async function requireSuperAdminProfile() {
   if (profile.is_active === false) throw new Error("Account deactivated");
   return profile;
 }
+
+export async function requireStaffManagement() {
+  return requirePermission("manage_staff");
+}

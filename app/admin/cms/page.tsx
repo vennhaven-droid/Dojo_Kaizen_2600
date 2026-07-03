@@ -47,21 +47,25 @@ export default async function CmsPage() {
       </form>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Link href="/admin/cms/media" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
+          <h3 className="font-display text-lg text-gold">Media &amp; Photos</h3>
+          <p className="mt-2 text-sm text-kaizen-muted">Hero, banners, gallery, facility photos — tap to upload, no links needed</p>
+        </Link>
+        <Link href="/admin/cms/media#facility" className="rounded-xl border border-gold/30 bg-gold/5 p-6 hover:border-gold/40 transition-colors">
+          <h3 className="font-display text-lg text-gold">Facility Gallery</h3>
+          <p className="mt-2 text-sm text-kaizen-muted">Manage photos on the /facility page</p>
+        </Link>
         <Link href="/admin/programs" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
           <h3 className="font-display text-lg text-gold">Programs</h3>
-          <p className="mt-2 text-sm text-kaizen-muted">Manage training programs shown on /programs</p>
+          <p className="mt-2 text-sm text-kaizen-muted">Program names, descriptions, and card images on /programs</p>
         </Link>
         <Link href="/admin/coaches" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
           <h3 className="font-display text-lg text-gold">Coaches</h3>
           <p className="mt-2 text-sm text-kaizen-muted">Coach bios and photos on /coaches</p>
         </Link>
-        <Link href="/admin/cms/media" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
-          <h3 className="font-display text-lg text-gold">Media &amp; Photos</h3>
-          <p className="mt-2 text-sm text-kaizen-muted">Hero, gallery, coach photos — click to change</p>
-        </Link>
         <Link href="/admin/pricing" className="rounded-xl border border-blue/20 bg-kaizen-dark p-6 hover:border-gold/40 transition-colors">
           <h3 className="font-display text-lg text-gold">Pricing</h3>
-          <p className="mt-2 text-sm text-kaizen-muted">Public pricing tiers on /pricing</p>
+          <p className="mt-2 text-sm text-kaizen-muted">Public pricing tiers and contact section on /pricing</p>
         </Link>
       </div>
 

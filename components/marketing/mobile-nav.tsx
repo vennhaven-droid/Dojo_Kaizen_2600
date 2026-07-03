@@ -69,8 +69,11 @@ export function MobileNav({ items }: { items: NavItem[] }) {
           ))}
         </ul>
 
-        <div className="shrink-0 border-t border-kaizen-red/20 px-5 py-4">
-          <Button asChild variant="gold" className="w-full" onClick={() => setOpen(false)}>
+        <div className="shrink-0 space-y-3 border-t border-kaizen-red/20 px-5 py-4">
+          <Button asChild variant="outline" className="w-full min-h-11" onClick={() => setOpen(false)}>
+            <Link href="/login">Login</Link>
+          </Button>
+          <Button asChild variant="gold" className="w-full min-h-11" onClick={() => setOpen(false)}>
             <Link href="/enroll">Enroll Now</Link>
           </Button>
         </div>

@@ -47,10 +47,14 @@ export default async function EditCoachPage({
         <p className="text-sm text-kaizen-muted">Marketing profile — no login account linked.</p>
       )}
 
-      <ImageUploadField label="Coach photo" defaultUrl={photoUrl} action={uploadPhoto} shape="circle" />
+      <ImageUploadField
+        label="Tap to change coach photo"
+        defaultUrl={photoUrl}
+        action={uploadPhoto}
+        shape="circle"
+      />
 
       <form action={save} className="space-y-4 rounded-xl border border-blue/20 bg-kaizen-dark p-6">
-        <input type="hidden" name="photo_url" value={photoUrl ?? ""} />
         {isMarketingOnly && (
           <div className="space-y-1.5">
             <Label>Display name</Label>

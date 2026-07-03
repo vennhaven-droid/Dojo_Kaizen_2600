@@ -17,10 +17,12 @@ export function CreateUserForm({
   defaultRole,
   programs,
   students,
+  isSuperAdmin = false,
 }: {
   defaultRole?: string;
   programs: Program[];
   students: Student[];
+  isSuperAdmin?: boolean;
 }) {
   const initial: AccountType =
     defaultRole === "coach"
@@ -159,11 +161,13 @@ export function CreateUserForm({
       {isStaff && (
         <fieldset className="space-y-2">
           <legend className="text-sm font-semibold text-gold">Admin permissions</legend>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="perm_full_admin_access" />
-            Full admin access (all permissions)
-          </label>
-          {ALL_PERMISSION_FLAGS.filter((f) => f !== "manage_staff").map((flag) => (
+          {isSuperAdmin && (
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" name="perm_full_admin_access" />
+              Full admin access (all permissions)
+            </label>
+          )}
+          {ALL_PERMISSION_FLAGS.filter((f) => f !== "manage_staff" || isSuperAdmin).map((flag) => (
             <label key={flag} className="flex items-center gap-2 text-sm text-kaizen-muted">
               <input type="checkbox" name={`perm_${flag}`} />
               {PERMISSION_LABELS[flag]}

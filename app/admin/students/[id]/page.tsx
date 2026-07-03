@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/permissions-server";
 import { Badge } from "@/components/ui/badge";
 import { StudentDetailTabs } from "@/components/admin/student-detail-tabs";
 import { getStudentMemberships } from "@/lib/memberships";
@@ -11,6 +12,7 @@ export default async function StudentDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePermission("view_students");
   const { id } = await params;
   const supabase = await createClient();
   const { data: student } = await supabase

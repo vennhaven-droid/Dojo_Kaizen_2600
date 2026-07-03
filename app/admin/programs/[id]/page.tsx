@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { updateProgramAction } from "../../cms/actions";
+import { updateProgramAction, updateProgramImageAction } from "../../cms/actions";
+import { getProgramImage } from "@/lib/brand";
+import { ImageUploadField } from "@/components/admin/image-upload-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +19,14 @@ export default async function EditProgramPage({
   const { data: program } = await supabase?.from("programs").select("*").eq("id", id).single() ?? { data: null };
   if (!program) notFound();
 
+  const { data: cmsProgram } = await supabase
+    ?.from("cms_programs")
+    .select("image_url")
+    .eq("program_id", id)
+    .maybeSingle() ?? { data: null };
+
+  const imageUrl = cmsProgram?.image_url ?? getProgramImage(program.name);
+
   async function save(formData: FormData) {
     "use server";
     await updateProgramAction(id, formData);
@@ -26,6 +36,14 @@ export default async function EditProgramPage({
     <div className="mx-auto max-w-xl space-y-6">
       <Link href="/admin/programs" className="text-sm text-blue hover:underline">← Programs</Link>
       <h2 className="font-display text-2xl font-bold">Edit {program.name}</h2>
+
+      <ImageUploadField
+        label="Tap to change program image"
+        defaultUrl={imageUrl}
+        action={updateProgramImageAction.bind(null, id)}
+        shape="wide"
+      />
+
       <form action={save} className="space-y-4 rounded-xl border border-blue/20 bg-kaizen-dark p-6">
         <div className="space-y-1.5"><Label>Name</Label><Input name="name" defaultValue={program.name} required /></div>
         <div className="space-y-1.5"><Label>Description</Label><Textarea name="description" defaultValue={program.description ?? ""} /></div>

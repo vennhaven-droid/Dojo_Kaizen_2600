@@ -16,7 +16,7 @@ const blockIcons: Record<string, string> = {
 type ScheduleEntry = {
   time: string;
   className: string;
-  coach: string;
+  coach?: string;
   days: string;
 };
 
@@ -25,7 +25,10 @@ type ScheduleBoardProps = {
 };
 
 export function ScheduleBoard({ scheduleEntries }: ScheduleBoardProps) {
-  const useDbSchedule = scheduleEntries && scheduleEntries.length > 0;
+  const useDbSchedule =
+    scheduleEntries &&
+    scheduleEntries.length > 0 &&
+    scheduleEntries.every((e) => Boolean(e.coach?.trim()));
 
   return (
     <div className="space-y-16">
@@ -71,7 +74,9 @@ export function ScheduleBoard({ scheduleEntries }: ScheduleBoardProps) {
                     <p className="font-display font-bold text-kaizen-gray group-hover:text-gold transition-colors">
                       {entry.className}
                     </p>
-                    <p className="mt-1 text-sm text-kaizen-muted">{entry.coach}</p>
+                    {entry.coach?.trim() && (
+                      <p className="mt-1 text-sm text-kaizen-muted">{entry.coach}</p>
+                    )}
                   </div>
                   <span className="inline-flex w-fit rounded-full border border-blue/30 bg-blue/10 px-3 py-1 text-xs font-semibold text-blue">
                     {entry.days}
@@ -110,7 +115,9 @@ export function ScheduleBoard({ scheduleEntries }: ScheduleBoardProps) {
                       <p className="font-display font-bold text-kaizen-gray group-hover:text-gold transition-colors">
                         {entry.className}
                       </p>
-                      <p className="mt-1 text-sm text-kaizen-muted">{entry.coach}</p>
+                      {entry.coach?.trim() && (
+                        <p className="mt-1 text-sm text-kaizen-muted">{entry.coach}</p>
+                      )}
                     </div>
                     <span className="inline-flex w-fit rounded-full border border-blue/30 bg-blue/10 px-3 py-1 text-xs font-semibold text-blue">
                       {entry.days}

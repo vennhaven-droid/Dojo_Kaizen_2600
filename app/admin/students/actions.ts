@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requirePermission } from "@/lib/permissions-server";
@@ -190,6 +191,16 @@ export async function convertEnrollmentLead(leadId: string) {
 
   if (!lead) throw new Error("Lead not found");
 
+  let programId = "";
+  if (lead.program_interest) {
+    const interest = String(lead.program_interest).trim();
+    const { data: programs } = await supabase.from("programs").select("id, name").eq("is_active", true);
+    const match = (programs ?? []).find(
+      (p) => p.name.toLowerCase() === interest.toLowerCase() || interest.toLowerCase().includes(p.name.toLowerCase())
+    );
+    if (match) programId = match.id;
+  }
+
   const fd = new FormData();
   fd.set("first_name", lead.first_name);
   fd.set("last_name", lead.last_name);
@@ -198,6 +209,7 @@ export async function convertEnrollmentLead(leadId: string) {
   fd.set("phone", lead.phone ?? "");
   fd.set("guardian1_name", lead.parent_name ?? "");
   fd.set("guardian1_phone", lead.parent_phone ?? "");
+  if (programId) fd.set("program_id", programId);
   if (lead.email) {
     fd.set("login_email", lead.email);
     fd.set("login_password", `Kaizen${Math.random().toString(36).slice(2, 10)}!`);
@@ -216,5 +228,5 @@ export async function convertEnrollmentLead(leadId: string) {
     .eq("id", leadId);
 
   revalidatePath("/admin/enrollments");
-  return result;
+  redirect(`/admin/students/${result.id}`);
 }

@@ -18,6 +18,12 @@ export const DEFAULT_GALLERY = MARKETING_IMAGES.gallery.map((url, i) => ({
   sort_order: i + 1,
 }));
 
+export const DEFAULT_FACILITY_GALLERY = MARKETING_IMAGES.facilityGallery.map((url, i) => ({
+  title: `Facility ${i + 1}`,
+  image_url: url,
+  sort_order: i + 1,
+}));
+
 export async function bootstrapCmsMedia(supabase: SupabaseClient) {
   const { count: galleryCount } = await supabase
     .from("cms_gallery")
@@ -70,6 +76,21 @@ export async function bootstrapCmsMedia(supabase: SupabaseClient) {
         is_active: true,
         sort_order: i + 1,
         profile_id: null,
+      }))
+    );
+  }
+
+  const { count: facilityCount } = await supabase
+    .from("cms_gallery")
+    .select("*", { count: "exact", head: true })
+    .eq("category", "facility");
+
+  if (!facilityCount) {
+    await supabase.from("cms_gallery").insert(
+      DEFAULT_FACILITY_GALLERY.map((item) => ({
+        ...item,
+        category: "facility",
+        is_published: true,
       }))
     );
   }

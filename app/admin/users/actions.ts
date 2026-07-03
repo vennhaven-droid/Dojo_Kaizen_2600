@@ -3,13 +3,23 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireSuperAdminProfile } from "@/lib/permissions-server";
-import { ALL_PERMISSION_FLAGS, permissionsFromForm } from "@/lib/permissions";
+import {
+  requireSuperAdminProfile,
+  requireStaffManagement,
+  requirePermission,
+} from "@/lib/permissions-server";
+import { ALL_PERMISSION_FLAGS, permissionsFromForm, type AdminPermissions } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createStudent } from "../students/actions";
 
+function sanitizeStaffPermissions(perms: AdminPermissions, isSuperAdmin: boolean): AdminPermissions {
+  if (isSuperAdmin) return perms;
+  perms.manage_staff = false;
+  perms.full_admin_access = false;
+  return perms;
+}
+
 export async function createUserAccount(formData: FormData) {
-  await requireSuperAdminProfile();
   const accountType = String(formData.get("account_type"));
 
   if (accountType === "STUDENT") {
@@ -20,12 +30,14 @@ export async function createUserAccount(formData: FormData) {
   }
 
   if (accountType === "PARENT") {
+    await requirePermission("create_edit_students");
     await createParentUser(formData);
     revalidatePath("/admin/users");
     return;
   }
 
   if (accountType === "COACH" || accountType === "ADMIN") {
+    await requireStaffManagement();
     await createStaffUser(formData, accountType as "COACH" | "ADMIN");
     revalidatePath("/admin/users");
     return;
@@ -35,6 +47,7 @@ export async function createUserAccount(formData: FormData) {
 }
 
 async function createStaffUser(formData: FormData, role: "COACH" | "ADMIN") {
+  const actor = await requireStaffManagement();
   const admin = createAdminClient();
   if (!admin) throw new Error("Database not configured");
 
@@ -56,7 +69,8 @@ async function createStaffUser(formData: FormData, role: "COACH" | "ADMIN") {
     .update({ role, first_name: firstName, last_name: lastName, email, is_active: true })
     .eq("id", authUser.user.id);
 
-  const perms = permissionsFromForm(authUser.user.id, formData);
+  const isSuperAdmin = actor.role === "SUPER_ADMIN";
+  const perms = sanitizeStaffPermissions(permissionsFromForm(authUser.user.id, formData), isSuperAdmin);
   const { error: permError } = await admin.from("admin_permissions").upsert(perms);
   if (permError) throw new Error(permError.message);
 
@@ -68,7 +82,6 @@ async function createStaffUser(formData: FormData, role: "COACH" | "ADMIN") {
     });
   }
 
-  const actor = await requireSuperAdminProfile();
   await logAudit({
     userId: actor.id,
     action: "CREATE",

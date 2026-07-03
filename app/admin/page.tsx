@@ -1,11 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/supabase/server";
+import { getStaffPermissions } from "@/lib/permissions-server";
+import { hasPermission } from "@/lib/permissions";
 import { getRevenueStats, getAccountsReceivable } from "@/lib/payments";
 import { MetricCard } from "@/components/portals/portal-shell";
 import { formatPeso, todayISO } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import type { UserRole } from "@/lib/types";
 
 export default async function AdminDashboard() {
+  const profile = await getCurrentProfile();
+  const perms = profile ? await getStaffPermissions(profile.id) : null;
+  const role = (profile?.role ?? "ADMIN") as UserRole;
+  const canCreateStudent = hasPermission(perms, role, "create_edit_students");
+  const canManageStaff = hasPermission(perms, role, "manage_staff");
+
   const supabase = await createClient();
   const today = todayISO();
 
@@ -64,10 +74,15 @@ export default async function AdminDashboard() {
           <h2 className="font-display text-2xl font-bold text-kaizen-gray">Executive Dashboard</h2>
           <p className="text-sm text-kaizen-muted">Real-time academy overview</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button asChild variant="secondary" size="sm"><Link href="/admin/enrollments">Enrollments</Link></Button>
           <Button asChild variant="secondary" size="sm"><Link href="/admin/inquiries">Inquiries</Link></Button>
-          <Button asChild variant="secondary" size="sm"><Link href="/admin/students/new">+ Student</Link></Button>
+          {canCreateStudent && (
+            <Button asChild variant="secondary" size="sm"><Link href="/admin/students/new">+ Student</Link></Button>
+          )}
+          {canManageStaff && (
+            <Button asChild variant="secondary" size="sm"><Link href="/admin/users">+ Staff</Link></Button>
+          )}
           <Button asChild variant="gold" size="sm"><Link href="/admin/payments">Record Payment</Link></Button>
         </div>
       </div>

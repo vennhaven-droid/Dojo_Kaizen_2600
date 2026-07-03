@@ -20,7 +20,7 @@ function RateList({ tiers }: { tiers: PricingTier[] }) {
       {tiers.map((tier) => (
         <li
           key={tier.id ?? tier.title}
-          className={`flex items-center justify-between gap-4 border-b border-blue/10 pb-3 last:border-0 last:pb-0 ${
+          className={`flex flex-col gap-1 border-b border-blue/10 pb-3 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${
             tier.is_promoted ? "text-gold" : ""
           }`}
         >

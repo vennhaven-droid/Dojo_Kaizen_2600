@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/permissions-server";
 import { createStudent } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { redirect } from "next/navigation";
 
 export default async function NewStudentPage() {
+  await requirePermission("create_edit_students");
   const supabase = await createClient();
   const { data: programs } = await supabase?.from("programs").select("id, name").eq("is_active", true).order("name") ?? { data: [] };
 

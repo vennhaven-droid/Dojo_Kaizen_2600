@@ -189,6 +189,38 @@ export async function getCmsGallery() {
     .from("cms_gallery")
     .select("*")
     .eq("is_published", true)
+    .eq("category", "general")
+    .order("sort_order");
+  return data ?? [];
+}
+
+export async function getFacilityGallery() {
+  const supabase = await createClient();
+  if (!supabase) return [];
+  const { data } = await supabase
+    .from("cms_gallery")
+    .select("*")
+    .eq("is_published", true)
+    .eq("category", "facility")
+    .order("sort_order");
+  if (data?.length) return data;
+  return MARKETING_IMAGES.facilityGallery.map((url, i) => ({
+    id: `fallback-${i}`,
+    title: `Facility ${i + 1}`,
+    image_url: url,
+    category: "facility",
+    sort_order: i + 1,
+    is_published: true,
+  }));
+}
+
+export async function getFacilityGalleryAdmin() {
+  const supabase = await createClient();
+  if (!supabase) return [];
+  const { data } = await supabase
+    .from("cms_gallery")
+    .select("*")
+    .eq("category", "facility")
     .order("sort_order");
   return data ?? [];
 }
@@ -196,7 +228,11 @@ export async function getCmsGallery() {
 export async function getCmsGalleryAdmin() {
   const supabase = await createClient();
   if (!supabase) return [];
-  const { data } = await supabase.from("cms_gallery").select("*").order("sort_order");
+  const { data } = await supabase
+    .from("cms_gallery")
+    .select("*")
+    .eq("category", "general")
+    .order("sort_order");
   return data ?? [];
 }
 
@@ -235,7 +271,12 @@ export async function getPublicCoaches(): Promise<
 > {
   const dbCoaches = await getCoaches();
   if (dbCoaches.length > 0) {
-    return dbCoaches.map((c) => {
+    return dbCoaches
+      .filter((c) => {
+        const name = coachDisplayName(c);
+        return name !== "Name" && !String(c.bio ?? "").toLowerCase().includes("coming soon");
+      })
+      .map((c) => {
       const profile = c.profiles as { first_name?: string; last_name?: string; avatar_url?: string } | null;
       return {
         name: coachDisplayName(c),

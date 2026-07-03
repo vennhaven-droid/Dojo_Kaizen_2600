@@ -4,6 +4,7 @@ import { SITE_URL } from "@/lib/seo";
 const routes = [
   "",
   "/about",
+  "/facility",
   "/programs",
   "/coaches",
   "/schedule",

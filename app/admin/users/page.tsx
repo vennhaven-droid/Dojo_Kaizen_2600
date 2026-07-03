@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { requireSuperAdminProfile } from "@/lib/permissions-server";
+import { requireStaffManagement, requireSuperAdminProfile } from "@/lib/permissions-server";
 import { ALL_PERMISSION_FLAGS, PERMISSION_LABELS } from "@/lib/permissions";
 import { deactivateUserAccount, updateStaffPermissions } from "./actions";
 import { CreateUserForm } from "@/components/admin/create-user-form";
@@ -11,7 +11,8 @@ export default async function UsersPage({
 }: {
   searchParams: Promise<{ role?: string }>;
 }) {
-  await requireSuperAdminProfile();
+  const profile = await requireStaffManagement();
+  const isSuperAdmin = profile.role === "SUPER_ADMIN";
   const { role } = await searchParams;
   const supabase = await createClient();
 
@@ -40,8 +41,10 @@ export default async function UsersPage({
         defaultRole={role}
         programs={programs ?? []}
         students={students ?? []}
+        isSuperAdmin={isSuperAdmin}
       />
 
+      {isSuperAdmin && (
       <section>
         <h3 className="font-display text-xl font-bold">Staff &amp; coaches</h3>
         <div className="mt-4 space-y-4">
@@ -95,6 +98,7 @@ export default async function UsersPage({
           })}
         </div>
       </section>
+      )}
     </div>
   );
 }
