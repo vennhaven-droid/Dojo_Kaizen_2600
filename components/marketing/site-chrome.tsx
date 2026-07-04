@@ -42,15 +42,20 @@ export function MarketingHeader({ logoUrl }: { logoUrl?: string }) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Button asChild variant="outline" size="sm" className="hidden min-h-10 sm:inline-flex">
-            <Link href="/login">Login</Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            asChild
+            variant="gold"
+            size="sm"
+            className="inline-flex min-h-10 px-3 text-xs font-bold shadow-md shadow-gold/10 sm:px-4 sm:text-sm lg:hidden"
+          >
+            <Link href="/login">Log in</Link>
           </Button>
-          <Button asChild variant="gold" size="sm" className="hidden min-h-10 sm:inline-flex shadow-md shadow-gold/10">
+          <Button asChild variant="outline" size="sm" className="hidden min-h-10 lg:inline-flex">
+            <Link href="/login">Log in</Link>
+          </Button>
+          <Button asChild variant="gold" size="sm" className="hidden min-h-10 shadow-md shadow-gold/10 lg:inline-flex">
             <Link href="/enroll">Enroll Now</Link>
-          </Button>
-          <Button asChild variant="outline" size="sm" className="inline-flex min-h-10 sm:hidden">
-            <Link href="/login">Login</Link>
           </Button>
           <MobileNav items={NAV} />
         </div>

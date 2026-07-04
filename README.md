@@ -44,6 +44,26 @@ Premium martial arts academy management platform and marketing website.
 
 5. Open [http://localhost:3000](http://localhost:3000)
 
+## Google sign-in
+
+Members and staff can log in with Google using the same email the dojo used when creating their account.
+
+### Supabase
+
+1. **Authentication → Providers → Google** — enable Google and add your OAuth client ID and secret from [Google Cloud Console](https://console.cloud.google.com/apis/credentials).
+2. **Authentication → URL Configuration** — add redirect URLs:
+   - `http://localhost:3000/auth/callback` (local dev)
+   - `https://dojokaizen2600.com/auth/callback` (production)
+3. **Authentication → Providers → Google** (or Auth settings) — enable **Automatic linking** so Google sign-in attaches to existing email/password accounts with the same email.
+
+### Google Cloud Console
+
+1. Create an OAuth 2.0 **Web application** client.
+2. **Authorized JavaScript origins:** `http://localhost:3000`, `https://dojokaizen2600.com`
+3. **Authorized redirect URIs:** your Supabase project callback URL (`https://<project-ref>.supabase.co/auth/v1/callback`).
+
+Run migration `0009_google_oauth_login.sql` so OAuth-only sign-ups do not auto-create parent accounts.
+
 ## Deployment
 
 - **Vercel** for the Next.js app

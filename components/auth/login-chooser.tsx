@@ -1,8 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import type { LoginPortal } from "@/lib/auth-routes";
 
-export type LoginPortal = "member" | "staff";
+export type { LoginPortal };
 
 export function LoginChooser({
   value,
@@ -39,28 +40,4 @@ export function LoginChooser({
       </button>
     </div>
   );
-}
-
-export function roleMatchesPortal(
-  role: string | undefined,
-  portal: LoginPortal
-): boolean {
-  if (!role) return false;
-  if (portal === "member") return role === "STUDENT" || role === "PARENT";
-  return role === "COACH" || role === "ADMIN" || role === "SUPER_ADMIN";
-}
-
-export function getRouteForRole(role: string | undefined): string {
-  switch (role) {
-    case "SUPER_ADMIN":
-    case "ADMIN":
-    case "COACH":
-      return "/admin";
-    case "PARENT":
-      return "/parent";
-    case "STUDENT":
-      return "/student";
-    default:
-      return "/";
-  }
 }
