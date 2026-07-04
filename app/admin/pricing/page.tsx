@@ -104,7 +104,7 @@ function TierEditor({ tier }: { tier: PricingTier }) {
         </div>
         <Button type="submit" variant="outline" size="sm">Save tier</Button>
       </form>
-      <form action={deletePricingTierAction.bind(null, tier.id)} className="ml-6">
+      <form action={deletePricingTierAction.bind(null, tier.id)} className="border-t border-blue/10 pt-3">
         <Button type="submit" variant="ghost" size="sm" className="text-red-400">
           Delete tier
         </Button>

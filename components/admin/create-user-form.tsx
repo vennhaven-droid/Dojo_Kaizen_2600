@@ -161,8 +161,9 @@ export function CreateUserForm({
       {isStaff && (
         <fieldset className="space-y-2">
           <legend className="text-sm font-semibold text-gold">Admin permissions</legend>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {isSuperAdmin && (
-            <label className="flex items-center gap-2 text-sm">
+            <label className="flex items-center gap-2 text-sm sm:col-span-2">
               <input type="checkbox" name="perm_full_admin_access" />
               Full admin access (all permissions)
             </label>
@@ -173,6 +174,7 @@ export function CreateUserForm({
               {PERMISSION_LABELS[flag]}
             </label>
           ))}
+          </div>
         </fieldset>
       )}
 

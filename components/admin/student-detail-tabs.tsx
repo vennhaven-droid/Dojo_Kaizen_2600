@@ -38,13 +38,13 @@ export function StudentDetailTabs({
 
   return (
     <>
-      <nav className="flex flex-wrap gap-2 border-b border-blue/20 pb-2">
+      <nav className="-mx-1 flex gap-2 overflow-x-auto border-b border-blue/20 pb-2">
         {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
             onClick={() => setTab(t.id)}
-            className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+            className={`shrink-0 rounded-md px-3 py-1.5 text-sm transition-colors ${
               tab === t.id ? "bg-gold/20 text-gold" : "text-kaizen-muted hover:text-kaizen-silver"
             }`}
           >
@@ -91,10 +91,10 @@ export function StudentDetailTabs({
             <div className="rounded-xl border border-blue/20 bg-kaizen-dark p-6">
               <h3 className="font-display text-lg text-gold">Stats</h3>
               <dl className="mt-4 space-y-2 text-sm">
-                <div className="flex justify-between"><dt>Visits</dt><dd>{stats?.total_visits ?? 0}</dd></div>
-                <div className="flex justify-between"><dt>Streak</dt><dd className="streak-fire">{stats?.current_streak ?? 0} days</dd></div>
-                <div className="flex justify-between"><dt>Level</dt><dd>{stats?.level ?? 1}</dd></div>
-                <div className="flex justify-between"><dt>XP</dt><dd>{stats?.xp_points ?? 0}</dd></div>
+                <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between"><dt>Visits</dt><dd>{stats?.total_visits ?? 0}</dd></div>
+                <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between"><dt>Streak</dt><dd className="streak-fire">{stats?.current_streak ?? 0} days</dd></div>
+                <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between"><dt>Level</dt><dd>{stats?.level ?? 1}</dd></div>
+                <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between"><dt>XP</dt><dd>{stats?.xp_points ?? 0}</dd></div>
               </dl>
             </div>
             {medical && (
@@ -119,8 +119,8 @@ export function StudentDetailTabs({
                 const pkg = m.session_packages as { remaining?: number } | Array<{ remaining?: number }> | null;
                 const sessionPkg = Array.isArray(pkg) ? pkg[0] : pkg;
                 return (
-                  <li key={String(m.id)} className="flex justify-between text-sm border-b border-blue/10 pb-2">
-                    <span>{program?.name} · {String(m.type)} · <Badge>{String(m.status)}</Badge></span>
+                  <li key={String(m.id)} className="flex flex-col gap-1 border-b border-blue/10 pb-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+                    <span className="break-words">{program?.name} · {String(m.type)} · <Badge>{String(m.status)}</Badge></span>
                     <span>
                       {sessionPkg ? `${sessionPkg.remaining} sessions left` : formatPeso(Number(m.custom_rate ?? program?.default_price ?? 0))}
                     </span>
@@ -138,7 +138,7 @@ export function StudentDetailTabs({
           <ul className="mt-4 space-y-2 text-sm">
             {attendance.length === 0 && <p className="text-kaizen-muted">No attendance records</p>}
             {attendance.map((a) => (
-              <li key={String(a.id)} className="flex justify-between border-b border-blue/10 pb-2">
+              <li key={String(a.id)} className="flex flex-col gap-1 border-b border-blue/10 pb-2 text-sm sm:flex-row sm:justify-between">
                 <span>{String(a.date)}</span>
                 <span className="text-kaizen-muted">
                   {a.checked_out_at ? `${String(a.duration_minutes ?? "—")} min` : "Checked in"}
@@ -155,8 +155,8 @@ export function StudentDetailTabs({
           <ul className="mt-4 space-y-2 text-sm">
             {payments.length === 0 && <p className="text-kaizen-muted">No payments</p>}
             {payments.map((p) => (
-              <li key={String(p.id)} className="flex justify-between">
-                <span>{new Date(String(p.paid_at ?? p.due_date)).toLocaleDateString()} · {String(p.method ?? "—")}</span>
+              <li key={String(p.id)} className="flex flex-col gap-1 text-sm sm:flex-row sm:justify-between">
+                <span className="break-words">{new Date(String(p.paid_at ?? p.due_date)).toLocaleDateString()} · {String(p.method ?? "—")}</span>
                 <span className="text-gold">{formatPeso(Number(p.amount))}</span>
               </li>
             ))}

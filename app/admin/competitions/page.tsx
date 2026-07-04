@@ -40,11 +40,11 @@ export default async function CompetitionsPage() {
           const student = c.students as { first_name?: string; last_name?: string } | null;
           return (
             <div key={c.id} className="rounded-xl border border-blue/20 bg-kaizen-dark p-5">
-              <div className="flex justify-between">
-                <h3 className="font-bold">{c.name}</h3>
-                <span className="text-sm text-kaizen-muted">{formatDate(c.date)}</span>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                <h3 className="font-bold break-words">{c.name}</h3>
+                <span className="shrink-0 text-sm text-kaizen-muted">{formatDate(c.date)}</span>
               </div>
-              <p className="text-sm mt-1">{student?.first_name} {student?.last_name} · {c.division} · {c.result} {c.medal && `· ${c.medal}`}</p>
+              <p className="mt-1 break-words text-sm">{student?.first_name} {student?.last_name} · {c.division} · {c.result} {c.medal && `· ${c.medal}`}</p>
             </div>
           );
         })}

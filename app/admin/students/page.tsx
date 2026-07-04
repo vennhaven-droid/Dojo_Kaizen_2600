@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AdminTableShell,
+  MobileEmptyState,
+  MobileRecordCard,
+  ResponsiveTable,
+} from "@/components/admin/responsive-list";
 import { calculateAge } from "@/lib/utils";
 
 export default async function StudentsPage({
@@ -25,6 +31,7 @@ export default async function StudentsPage({
   }
 
   const { data: students } = (await query) ?? { data: [] };
+  const list = students ?? [];
 
   return (
     <div className="space-y-6">
@@ -34,7 +41,7 @@ export default async function StudentsPage({
       </div>
 
       <form className="flex flex-wrap gap-3">
-        <Input name="q" defaultValue={q ?? ""} placeholder="Search name or email…" className="max-w-xs" />
+        <Input name="q" defaultValue={q ?? ""} placeholder="Search name or email…" className="w-full max-w-xs" />
         <select
           name="status"
           defaultValue={status ?? "ALL"}
@@ -48,44 +55,76 @@ export default async function StudentsPage({
         <Button type="submit" variant="secondary" size="sm">Filter</Button>
       </form>
 
-      <div className="overflow-x-auto rounded-xl border border-blue/20 bg-kaizen-dark">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Age</TableHead>
-              <TableHead>Program</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Visits</TableHead>
-              <TableHead>Last Visit</TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {(students ?? []).map((s) => {
-              const stats = s.student_stats as { total_visits?: number; last_visit?: string } | null;
-              const memberships = s.memberships as Array<{ programs?: { name?: string } }> | null;
-              const programNames = (memberships ?? []).map((m) => m.programs?.name).filter(Boolean).join(", ");
-              return (
-                <TableRow key={s.id}>
-                  <TableCell className="font-semibold">
-                    {s.first_name} {s.last_name}
-                    {s.nickname && <span className="text-kaizen-muted"> ({s.nickname})</span>}
-                  </TableCell>
-                  <TableCell>{calculateAge(s.birthday) ?? "—"}</TableCell>
-                  <TableCell className="text-sm text-kaizen-muted">{programNames || "—"}</TableCell>
-                  <TableCell><Badge variant={s.status === "ACTIVE" ? "success" : "muted"}>{s.status}</Badge></TableCell>
-                  <TableCell>{stats?.total_visits ?? 0}</TableCell>
-                  <TableCell>{stats?.last_visit ?? "—"}</TableCell>
-                  <TableCell>
-                    <Link href={`/admin/students/${s.id}`} className="text-blue hover:underline text-sm">View</Link>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </div>
+      {list.length === 0 ? (
+        <MobileEmptyState message="No students found." />
+      ) : (
+        <ResponsiveTable
+          desktop={
+            <AdminTableShell>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Age</TableHead>
+                    <TableHead>Program</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Visits</TableHead>
+                    <TableHead>Last Visit</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {list.map((s) => {
+                    const stats = s.student_stats as { total_visits?: number; last_visit?: string } | null;
+                    const memberships = s.memberships as Array<{ programs?: { name?: string } }> | null;
+                    const programNames = (memberships ?? []).map((m) => m.programs?.name).filter(Boolean).join(", ");
+                    return (
+                      <TableRow key={s.id}>
+                        <TableCell className="font-semibold">
+                          {s.first_name} {s.last_name}
+                          {s.nickname && <span className="text-kaizen-muted"> ({s.nickname})</span>}
+                        </TableCell>
+                        <TableCell>{calculateAge(s.birthday) ?? "—"}</TableCell>
+                        <TableCell className="text-sm text-kaizen-muted">{programNames || "—"}</TableCell>
+                        <TableCell><Badge variant={s.status === "ACTIVE" ? "success" : "muted"}>{s.status}</Badge></TableCell>
+                        <TableCell>{stats?.total_visits ?? 0}</TableCell>
+                        <TableCell>{stats?.last_visit ?? "—"}</TableCell>
+                        <TableCell>
+                          <Link href={`/admin/students/${s.id}`} className="text-blue hover:underline text-sm">View</Link>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </AdminTableShell>
+          }
+          mobile={list.map((s) => {
+            const stats = s.student_stats as { total_visits?: number; last_visit?: string } | null;
+            const memberships = s.memberships as Array<{ programs?: { name?: string } }> | null;
+            const programNames = (memberships ?? []).map((m) => m.programs?.name).filter(Boolean).join(", ");
+            const name = `${s.first_name} ${s.last_name}${s.nickname ? ` (${s.nickname})` : ""}`;
+            return (
+              <MobileRecordCard
+                key={s.id}
+                title={name}
+                badge={<Badge variant={s.status === "ACTIVE" ? "success" : "muted"}>{s.status}</Badge>}
+                rows={[
+                  { label: "Age", value: calculateAge(s.birthday) ?? "—" },
+                  { label: "Program", value: programNames || "—" },
+                  { label: "Visits", value: stats?.total_visits ?? 0 },
+                  { label: "Last visit", value: stats?.last_visit ?? "—" },
+                ]}
+                footer={
+                  <Link href={`/admin/students/${s.id}`} className="text-sm font-semibold text-blue hover:underline">
+                    View profile
+                  </Link>
+                }
+              />
+            );
+          })}
+        />
+      )}
     </div>
   );
 }

@@ -67,6 +67,7 @@ export default async function UsersPage({
                 {perms && (
                   <form action={updateStaffPermissions.bind(null, member.id)} className="mt-4 space-y-2 border-t border-blue/10 pt-4">
                     <p className="text-sm font-semibold text-kaizen-silver">Permissions</p>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {ALL_PERMISSION_FLAGS.filter((f) => f !== "manage_staff").map((flag) => (
                       <label key={flag} className="flex items-center gap-2 text-sm text-kaizen-muted">
                         <input
@@ -77,10 +78,11 @@ export default async function UsersPage({
                         {PERMISSION_LABELS[flag]}
                       </label>
                     ))}
-                    <label className="flex items-center gap-2 text-sm">
+                    <label className="flex items-center gap-2 text-sm sm:col-span-2">
                       <input type="checkbox" name="perm_full_admin_access" defaultChecked={perms.full_admin_access} />
                       Full admin access
                     </label>
+                    </div>
                     <Button type="submit" size="sm" variant="outline">
                       Save permissions
                     </Button>

@@ -11,6 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { formatPeso } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AdminTableShell,
+  MobileEmptyState,
+  MobileRecordCard,
+  ResponsiveTable,
+} from "@/components/admin/responsive-list";
 
 export default async function LockersPage() {
   const supabase = await createClient();
@@ -21,6 +27,8 @@ export default async function LockersPage() {
       .order("number") ?? { data: [] },
     supabase?.from("students").select("id, first_name, last_name").eq("status", "ACTIVE").order("last_name") ?? { data: [] },
   ]);
+
+  const list = lockers ?? [];
 
   return (
     <div className="space-y-8">
@@ -47,7 +55,7 @@ export default async function LockersPage() {
           <div className="space-y-1.5">
             <Label>Locker</Label>
             <select name="locker_id" required className="flex h-11 w-full rounded-md border border-blue/20 bg-kaizen-black px-3 text-sm">
-              {(lockers ?? []).filter((l) => l.status === "AVAILABLE").map((l) => (
+              {list.filter((l) => l.status === "AVAILABLE").map((l) => (
                 <option key={l.id} value={l.id}>#{l.number}</option>
               ))}
             </select>
@@ -64,44 +72,80 @@ export default async function LockersPage() {
         </form>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-blue/20 bg-kaizen-dark">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>#</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Student</TableHead>
-              <TableHead>Monthly Fee</TableHead>
-              <TableHead>Renewal</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {(lockers ?? []).map((l) => {
-              const rental = Array.isArray(l.locker_rentals) ? l.locker_rentals[0] : l.locker_rentals;
-              const student = rental?.students as { first_name?: string; last_name?: string } | null;
-              return (
-                <TableRow key={l.id}>
-                  <TableCell className="font-bold">#{l.number}</TableCell>
-                  <TableCell>
-                    <Badge variant={l.status === "AVAILABLE" ? "success" : "default"}>{l.status}</Badge>
-                  </TableCell>
-                  <TableCell>{student ? `${student.first_name} ${student.last_name}` : "—"}</TableCell>
-                  <TableCell>{formatPeso(Number(l.monthly_fee))}</TableCell>
-                  <TableCell>{rental?.renewal_date ?? "—"}</TableCell>
-                  <TableCell>
-                    {l.status === "OCCUPIED" && (
-                      <form action={releaseLockerAction.bind(null, l.id)}>
-                        <Button type="submit" size="sm" variant="outline">Release</Button>
-                      </form>
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </div>
+      {list.length === 0 ? (
+        <MobileEmptyState message="No lockers yet." />
+      ) : (
+        <ResponsiveTable
+          desktop={
+            <AdminTableShell>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>#</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Student</TableHead>
+                    <TableHead>Monthly Fee</TableHead>
+                    <TableHead>Renewal</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {list.map((l) => {
+                    const rental = Array.isArray(l.locker_rentals) ? l.locker_rentals[0] : l.locker_rentals;
+                    const student = rental?.students as { first_name?: string; last_name?: string } | null;
+                    return (
+                      <TableRow key={l.id}>
+                        <TableCell className="font-bold">#{l.number}</TableCell>
+                        <TableCell>
+                          <Badge variant={l.status === "AVAILABLE" ? "success" : "default"}>{l.status}</Badge>
+                        </TableCell>
+                        <TableCell>{student ? `${student.first_name} ${student.last_name}` : "—"}</TableCell>
+                        <TableCell>{formatPeso(Number(l.monthly_fee))}</TableCell>
+                        <TableCell>{rental?.renewal_date ?? "—"}</TableCell>
+                        <TableCell>
+                          {l.status === "OCCUPIED" && (
+                            <form action={releaseLockerAction.bind(null, l.id)}>
+                              <Button type="submit" size="sm" variant="outline">Release</Button>
+                            </form>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </AdminTableShell>
+          }
+          mobile={list.map((l) => {
+            const rental = Array.isArray(l.locker_rentals) ? l.locker_rentals[0] : l.locker_rentals;
+            const student = rental?.students as { first_name?: string; last_name?: string } | null;
+            return (
+              <MobileRecordCard
+                key={l.id}
+                title={`Locker #${l.number}`}
+                badge={<Badge variant={l.status === "AVAILABLE" ? "success" : "default"}>{l.status}</Badge>}
+                rows={[
+                  {
+                    label: "Student",
+                    value: student ? `${student.first_name} ${student.last_name}` : "—",
+                  },
+                  { label: "Fee", value: formatPeso(Number(l.monthly_fee)) },
+                  { label: "Renewal", value: rental?.renewal_date ?? "—" },
+                ]}
+                footer={
+                  l.status === "OCCUPIED" ? (
+                    <form action={releaseLockerAction.bind(null, l.id)}>
+                      <Button type="submit" size="sm" variant="outline" className="w-full sm:w-auto">
+                        Release
+                      </Button>
+                    </form>
+                  ) : undefined
+                }
+              />
+            );
+          })}
+        />
+      )}
     </div>
   );
 }

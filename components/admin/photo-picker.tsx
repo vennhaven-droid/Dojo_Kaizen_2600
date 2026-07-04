@@ -63,7 +63,7 @@ export function PhotoPicker({
   const isAdd = shape === "add";
 
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2", shape === "circle" && "mx-auto w-fit max-w-full")}>
       {(label || saved) && (
         <div className="flex items-center justify-between gap-2">
           {label && <p className="text-sm font-medium text-kaizen-silver">{label}</p>}

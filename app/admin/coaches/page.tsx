@@ -8,6 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AdminTableShell,
+  MobileRecordCard,
+  ResponsiveTable,
+} from "@/components/admin/responsive-list";
 
 export default async function CoachesAdminPage() {
   const coaches = await getAllCoaches();
@@ -48,42 +53,72 @@ export default async function CoachesAdminPage() {
           No coaches yet. Add a profile above or run &quot;Import website photos &amp; coaches&quot; on the Media page.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-blue/20 bg-kaizen-dark">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Account</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {coaches.map((c) => {
-                const profile = c.profiles as { email?: string } | null;
-                const hasLogin = Boolean(c.profile_id);
-                return (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-semibold">{coachDisplayName(c)}</TableCell>
-                    <TableCell className="text-sm text-kaizen-muted">
-                      {hasLogin ? (profile?.email ?? "Linked account") : "Marketing only"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={c.is_active ? "success" : "muted"}>
-                        {c.is_active ? "Active" : "Inactive"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Link href={`/admin/coaches/${c.id}`} className="text-sm text-blue hover:underline">
-                        Edit
-                      </Link>
-                    </TableCell>
+        <ResponsiveTable
+          desktop={
+            <AdminTableShell>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Account</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
+                </TableHeader>
+                <TableBody>
+                  {coaches.map((c) => {
+                    const profile = c.profiles as { email?: string } | null;
+                    const hasLogin = Boolean(c.profile_id);
+                    return (
+                      <TableRow key={c.id}>
+                        <TableCell className="font-semibold">{coachDisplayName(c)}</TableCell>
+                        <TableCell className="text-sm text-kaizen-muted">
+                          {hasLogin ? (profile?.email ?? "Linked account") : "Marketing only"}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={c.is_active ? "success" : "muted"}>
+                            {c.is_active ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Link href={`/admin/coaches/${c.id}`} className="text-sm text-blue hover:underline">
+                            Edit
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </AdminTableShell>
+          }
+          mobile={coaches.map((c) => {
+            const profile = c.profiles as { email?: string } | null;
+            const hasLogin = Boolean(c.profile_id);
+            return (
+              <MobileRecordCard
+                key={c.id}
+                title={coachDisplayName(c)}
+                badge={
+                  <Badge variant={c.is_active ? "success" : "muted"}>
+                    {c.is_active ? "Active" : "Inactive"}
+                  </Badge>
+                }
+                rows={[
+                  {
+                    label: "Account",
+                    value: hasLogin ? (profile?.email ?? "Linked account") : "Marketing only",
+                  },
+                ]}
+                footer={
+                  <Link href={`/admin/coaches/${c.id}`} className="text-sm font-semibold text-blue hover:underline">
+                    Edit coach
+                  </Link>
+                }
+              />
+            );
+          })}
+        />
       )}
     </div>
   );

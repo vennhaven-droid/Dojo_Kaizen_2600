@@ -99,7 +99,7 @@ export function RecordPaymentForm({ students }: { students: Student[] }) {
 
       <input type="hidden" name="payment_type" value="membership" />
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label>Amount</Label>
           <Input name="amount" type="number" step="0.01" required value={amount} onChange={(e) => setAmount(e.target.value)} />

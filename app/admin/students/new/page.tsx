@@ -21,7 +21,7 @@ export default async function NewStudentPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 sm:gap-4">
         <Link href="/admin/students" className="text-sm text-blue hover:underline">← Back</Link>
         <h2 className="font-display text-2xl font-bold">New Student</h2>
       </div>
@@ -90,7 +90,7 @@ export default async function NewStudentPage() {
         </section>
         <section className="space-y-4">
           <h3 className="font-display text-lg text-gold">Emergency Contact</h3>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
             <div className="space-y-1.5"><Label>Name</Label><Input name="emergency_name" /></div>
             <div className="space-y-1.5"><Label>Relationship</Label><Input name="emergency_relationship" /></div>
             <div className="space-y-1.5"><Label>Phone</Label><Input name="emergency_phone" /></div>

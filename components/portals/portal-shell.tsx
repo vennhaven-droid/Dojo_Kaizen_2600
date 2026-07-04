@@ -21,7 +21,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { UserRole } from "@/lib/types";
 import type { AdminPermissions } from "@/lib/permissions";
 import { canSeeNavItem } from "@/lib/permissions";
@@ -87,18 +87,53 @@ export function PortalShell({
   const [open, setOpen] = useState(false);
   const nav = getNav(role, permissions);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
   return (
     <div className="flex min-h-screen portal-gradient">
+      {open && (
+        <button
+          type="button"
+          aria-label="Close menu"
+          className="fixed inset-0 z-30 bg-kaizen-black/80 backdrop-blur-sm lg:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 w-64 border-r border-blue/20 bg-kaizen-black transition-transform lg:translate-x-0",
-          open ? "translate-x-0" : "-translate-x-full"
+          open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
-        <div className="flex h-16 items-center border-b border-blue/20 px-4">
-          <Link href="/" className="font-display text-sm font-bold text-gold">
+        <div className="flex h-16 items-center justify-between border-b border-blue/20 px-4">
+          <Link href="/" className="font-display text-sm font-bold text-gold" onClick={() => setOpen(false)}>
             DOJO KAIZEN
           </Link>
+          <button
+            type="button"
+            aria-label="Close menu"
+            className="rounded-md p-2 text-kaizen-muted hover:bg-blue/10 hover:text-gold lg:hidden"
+            onClick={() => setOpen(false)}
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
         </div>
         <nav className="max-h-[calc(100vh-8rem)] space-y-1 overflow-y-auto p-3">
           {nav.map((item) => {
@@ -135,14 +170,26 @@ export function PortalShell({
       </aside>
 
       <div className="flex flex-1 flex-col lg:pl-64">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-blue/20 bg-kaizen-black/95 px-4 backdrop-blur sm:px-6">
-          <div className="flex items-center gap-3">
-            <button type="button" className="lg:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-2 border-b border-blue/20 bg-kaizen-black/95 px-4 backdrop-blur sm:px-6">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <button
+              type="button"
+              className="shrink-0 lg:hidden"
+              onClick={() => setOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={open}
+            >
               <Menu className="size-5 text-kaizen-gray" />
             </button>
-            <h1 className="font-display text-lg font-bold text-kaizen-gray">{title}</h1>
+            <h1 className="truncate font-display text-lg font-bold text-kaizen-gray max-w-[50vw] sm:max-w-none">
+              {title}
+            </h1>
           </div>
-          {userEmail && <span className="hidden text-sm text-kaizen-muted sm:inline">{userEmail}</span>}
+          {userEmail && (
+            <span className="hidden max-w-[120px] truncate text-sm text-kaizen-muted sm:inline sm:max-w-[200px] md:max-w-none">
+              {userEmail}
+            </span>
+          )}
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>

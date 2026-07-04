@@ -9,6 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+function getResetErrorMessage(err: unknown): string {
+  const message = err instanceof Error ? err.message : "Something went wrong.";
+  const lower = message.toLowerCase();
+
+  if (lower.includes("rate limit")) {
+    return "Too many reset emails were sent. Wait at least 60 seconds and try again. If this keeps happening, your Supabase project may have hit its hourly email limit — connect custom SMTP in Supabase (Authentication → SMTP) or wait about an hour.";
+  }
+
+  return message;
+}
+
 export function ForgotPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -33,7 +44,7 @@ export function ForgotPasswordForm() {
       if (resetError) throw resetError;
       setSent(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(getResetErrorMessage(err));
     } finally {
       setLoading(false);
     }
