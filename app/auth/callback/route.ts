@@ -3,8 +3,20 @@ import { createClient } from "@/lib/supabase/server";
 import { resolveLoginRedirect } from "@/lib/auth/resolve-login-redirect";
 import { parseLoginPortal } from "@/lib/auth-routes";
 
+function resolveRequestOrigin(request: Request): string {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+  if (appUrl) return appUrl;
+
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const forwardedProto = request.headers.get("x-forwarded-proto") ?? "https";
+  if (forwardedHost) return `${forwardedProto}://${forwardedHost}`;
+
+  return new URL(request.url).origin;
+}
+
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
+  const origin = resolveRequestOrigin(request);
   const code = searchParams.get("code");
   const portal = parseLoginPortal(searchParams.get("portal"));
   const next = searchParams.get("next");
