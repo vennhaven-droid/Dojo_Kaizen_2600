@@ -1,16 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   requireSuperAdminProfile,
   requireStaffManagement,
   requirePermission,
 } from "@/lib/permissions-server";
-import { ALL_PERMISSION_FLAGS, permissionsFromForm, type AdminPermissions } from "@/lib/permissions";
+import { permissionsFromForm, type AdminPermissions } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createStudent } from "../students/actions";
+
+export type UserFormState = { error?: string; success?: string } | null;
 
 function sanitizeStaffPermissions(perms: AdminPermissions, isSuperAdmin: boolean): AdminPermissions {
   if (isSuperAdmin) return perms;
@@ -19,34 +23,107 @@ function sanitizeStaffPermissions(perms: AdminPermissions, isSuperAdmin: boolean
   return perms;
 }
 
-export async function createUserAccount(formData: FormData) {
-  const accountType = String(formData.get("account_type"));
-
-  if (accountType === "STUDENT") {
-    const result = await createStudent(formData);
-    revalidatePath("/admin/users");
-    revalidatePath("/admin/students");
-    redirect(`/admin/students/${result.id}`);
-  }
-
-  if (accountType === "PARENT") {
-    await requirePermission("create_edit_students");
-    await createParentUser(formData);
-    revalidatePath("/admin/users");
-    return;
-  }
-
-  if (accountType === "COACH" || accountType === "ADMIN") {
-    await requireStaffManagement();
-    await createStaffUser(formData, accountType as "COACH" | "ADMIN");
-    revalidatePath("/admin/users");
-    return;
-  }
-
-  throw new Error("Invalid account type");
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : "Something went wrong.";
 }
 
-async function createStaffUser(formData: FormData, role: "COACH" | "ADMIN") {
+function isAlreadyRegistered(message: string): boolean {
+  const lower = message.toLowerCase();
+  return (
+    lower.includes("already been registered") ||
+    lower.includes("already registered") ||
+    lower.includes("user already exists") ||
+    lower.includes("duplicate")
+  );
+}
+
+export async function createUserAccount(
+  _prev: UserFormState,
+  formData: FormData
+): Promise<UserFormState> {
+  try {
+    const accountType = String(formData.get("account_type"));
+
+    if (accountType === "STUDENT") {
+      const result = await createStudent(formData);
+      revalidatePath("/admin/users");
+      revalidatePath("/admin/students");
+      redirect(`/admin/students/${result.id}`);
+    }
+
+    if (accountType === "PARENT") {
+      await requirePermission("create_edit_students");
+      await createParentUser(formData);
+      revalidatePath("/admin/users");
+      return { success: "Parent account created." };
+    }
+
+    if (accountType === "COACH" || accountType === "ADMIN") {
+      await requireStaffManagement();
+      const reused = await createStaffUser(formData, accountType as "COACH" | "ADMIN");
+      revalidatePath("/admin/users");
+      return {
+        success: reused
+          ? `${accountType === "ADMIN" ? "Admin" : "Coach"} access granted to the existing account.`
+          : `${accountType === "ADMIN" ? "Admin" : "Coach"} account created.`,
+      };
+    }
+
+    return { error: "Invalid account type" };
+  } catch (err) {
+    if (isRedirectError(err)) throw err;
+    return { error: errorMessage(err) };
+  }
+}
+
+async function findAuthUserByEmail(
+  admin: NonNullable<ReturnType<typeof createAdminClient>>,
+  email: string
+): Promise<User | null> {
+  const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  if (error) throw new Error(error.message);
+  return data.users.find((user) => user.email?.toLowerCase() === email.toLowerCase()) ?? null;
+}
+
+async function getOrCreateAuthUser(
+  admin: NonNullable<ReturnType<typeof createAdminClient>>,
+  input: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  }
+): Promise<{ user: User; reused: boolean }> {
+  const { data: authUser, error: authError } = await admin.auth.admin.createUser({
+    email: input.email,
+    password: input.password,
+    email_confirm: true,
+    user_metadata: { first_name: input.firstName, last_name: input.lastName },
+  });
+
+  if (!authError && authUser.user) {
+    return { user: authUser.user, reused: false };
+  }
+
+  if (authError && isAlreadyRegistered(authError.message)) {
+    const existing = await findAuthUserByEmail(admin, input.email);
+    if (!existing) {
+      throw new Error("That email is already registered, but the account could not be loaded.");
+    }
+
+    const { error: updateError } = await admin.auth.admin.updateUserById(existing.id, {
+      password: input.password,
+      email_confirm: true,
+      user_metadata: { first_name: input.firstName, last_name: input.lastName },
+    });
+    if (updateError) throw new Error(updateError.message);
+    return { user: existing, reused: true };
+  }
+
+  throw new Error(authError?.message ?? "Could not create the login account.");
+}
+
+async function createStaffUser(formData: FormData, role: "COACH" | "ADMIN"): Promise<boolean> {
   const actor = await requireStaffManagement();
   const admin = createAdminClient();
   if (!admin) throw new Error("Database not configured");
@@ -56,27 +133,33 @@ async function createStaffUser(formData: FormData, role: "COACH" | "ADMIN") {
   const firstName = String(formData.get("first_name")).trim();
   const lastName = String(formData.get("last_name")).trim();
 
-  const { data: authUser, error: authError } = await admin.auth.admin.createUser({
+  const { user, reused } = await getOrCreateAuthUser(admin, {
     email,
     password,
-    email_confirm: true,
-    user_metadata: { first_name: firstName, last_name: lastName },
+    firstName,
+    lastName,
   });
-  if (authError) throw new Error(authError.message);
 
-  await admin
+  const { error: profileError } = await admin
     .from("profiles")
-    .update({ role, first_name: firstName, last_name: lastName, email, is_active: true })
-    .eq("id", authUser.user.id);
+    .upsert({
+      id: user.id,
+      role,
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      is_active: true,
+    });
+  if (profileError) throw new Error(profileError.message);
 
   const isSuperAdmin = actor.role === "SUPER_ADMIN";
-  const perms = sanitizeStaffPermissions(permissionsFromForm(authUser.user.id, formData), isSuperAdmin);
+  const perms = sanitizeStaffPermissions(permissionsFromForm(user.id, formData), isSuperAdmin);
   const { error: permError } = await admin.from("admin_permissions").upsert(perms);
   if (permError) throw new Error(permError.message);
 
   if (role === "COACH") {
     await admin.from("coaches").upsert({
-      profile_id: authUser.user.id,
+      profile_id: user.id,
       is_active: true,
       bio: String(formData.get("bio") || "") || null,
     });
@@ -84,11 +167,13 @@ async function createStaffUser(formData: FormData, role: "COACH" | "ADMIN") {
 
   await logAudit({
     userId: actor.id,
-    action: "CREATE",
+    action: reused ? "UPDATE" : "CREATE",
     entityType: "user_account",
-    entityId: authUser.user.id,
-    newValue: { email, role },
+    entityId: user.id,
+    newValue: { email, role, reused },
   });
+
+  return reused;
 }
 
 async function createParentUser(formData: FormData) {

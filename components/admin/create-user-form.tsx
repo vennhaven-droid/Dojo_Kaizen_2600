@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { ALL_PERMISSION_FLAGS, PERMISSION_LABELS } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,10 +34,11 @@ export function CreateUserForm({
           : "STUDENT";
 
   const [accountType, setAccountType] = useState<AccountType>(initial);
+  const [state, formAction, pending] = useActionState(createUserAccount, null);
   const isStaff = accountType === "COACH" || accountType === "ADMIN";
 
   return (
-    <form action={createUserAccount} className="max-w-2xl space-y-4 rounded-xl border border-blue/20 bg-kaizen-dark p-6">
+    <form action={formAction} className="max-w-2xl space-y-4 rounded-xl border border-blue/20 bg-kaizen-dark p-6">
       <input type="hidden" name="account_type" value={accountType} />
       <h3 className="font-display text-lg text-gold">Create User</h3>
       <p className="text-sm text-kaizen-muted">
@@ -178,8 +179,11 @@ export function CreateUserForm({
         </fieldset>
       )}
 
-      <Button type="submit" variant="gold">
-        Create {accountType.toLowerCase()} account
+      {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
+      {state?.success && <p className="text-sm text-green-400">{state.success}</p>}
+
+      <Button type="submit" variant="gold" disabled={pending}>
+        {pending ? "Saving..." : `Create ${accountType.toLowerCase()} account`}
       </Button>
     </form>
   );
