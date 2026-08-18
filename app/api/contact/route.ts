@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendEmail, contactFormEmail } from "@/lib/email";
+import { sendEmail, contactFormEmail, getAdminEmails } from "@/lib/email";
 
 const schema = z.object({
   name: z.string().min(1).max(200),
@@ -18,7 +18,6 @@ export async function POST(request: Request) {
   }
 
   const { name, email, message, source_page } = parsed.data;
-  const adminEmail = process.env.ADMIN_EMAIL ?? "info@dojokaizen.com";
 
   const supabase = createAdminClient();
   if (supabase) {
@@ -35,7 +34,7 @@ export async function POST(request: Request) {
   }
 
   await sendEmail(
-    adminEmail,
+    getAdminEmails(),
     `Contact from ${name}`,
     contactFormEmail({ name, email, message })
   );

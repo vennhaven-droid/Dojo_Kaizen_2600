@@ -5,10 +5,20 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? "hello@dojokaizen.com";
+const DEFAULT_ADMIN_EMAIL = "kaidoj0828@gmail.com";
 
-export async function sendEmail(to: string, subject: string, html: string) {
+export function getAdminEmails(): string[] {
+  const raw = process.env.ADMIN_EMAIL ?? DEFAULT_ADMIN_EMAIL;
+  const emails = raw
+    .split(",")
+    .map((email) => email.trim())
+    .filter(Boolean);
+  return emails.length > 0 ? emails : [DEFAULT_ADMIN_EMAIL];
+}
+
+export async function sendEmail(to: string | string[], subject: string, html: string) {
   if (!resend) {
-    console.log(`[Email stub] To: ${to}, Subject: ${subject}`);
+    console.log(`[Email stub] To: ${Array.isArray(to) ? to.join(", ") : to}, Subject: ${subject}`);
     return { success: true, stub: true };
   }
   try {

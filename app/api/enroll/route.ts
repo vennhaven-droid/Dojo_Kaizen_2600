@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendEmail, enrollmentNotification } from "@/lib/email";
+import { sendEmail, enrollmentNotification, getAdminEmails } from "@/lib/email";
 import { calculateAge } from "@/lib/utils";
 
 const schema = z.object({
@@ -57,9 +57,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL ?? "info@dojokaizen.com";
   await sendEmail(
-    adminEmail,
+    getAdminEmails(),
     "New Enrollment Lead",
     enrollmentNotification({
       firstName: data.first_name,
