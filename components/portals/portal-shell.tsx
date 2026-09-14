@@ -16,6 +16,7 @@ import {
   ClipboardList,
   LogOut,
   Menu,
+  MessageCircle,
   MessageSquare,
   Shield,
   UserCircle,
@@ -28,6 +29,7 @@ import { canSeeNavItem } from "@/lib/permissions";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/chat", label: "Chat", icon: MessageCircle },
   { href: "/admin/students", label: "Students", icon: Users },
   { href: "/admin/enrollments", label: "Enrollments", icon: FileText },
   { href: "/admin/inquiries", label: "Inquiries", icon: MessageSquare },
@@ -47,6 +49,7 @@ const ADMIN_NAV = [
 
 const PARENT_NAV = [
   { href: "/parent", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/parent/chat", label: "Chat", icon: MessageCircle },
   { href: "/parent/attendance", label: "Attendance", icon: Calendar },
   { href: "/parent/achievements", label: "Achievements", icon: Trophy },
   { href: "/parent/payments", label: "Payments", icon: CreditCard },
@@ -54,6 +57,7 @@ const PARENT_NAV = [
 
 const STUDENT_NAV = [
   { href: "/student", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/student/chat", label: "Chat", icon: MessageCircle },
   { href: "/student/profile", label: "My Profile", icon: UserCircle },
   { href: "/student/attendance", label: "Attendance", icon: Calendar },
   { href: "/student/payments", label: "Payments", icon: CreditCard },

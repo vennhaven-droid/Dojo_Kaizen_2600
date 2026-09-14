@@ -14,7 +14,8 @@ export type PermissionFlag =
   | "manage_coaches"
   | "manage_pricing"
   | "manage_schedule"
-  | "manage_staff";
+  | "manage_staff"
+  | "manage_chat";
 
 export type AdminPermissions = {
   profile_id: string;
@@ -32,6 +33,7 @@ export type AdminPermissions = {
   manage_pricing: boolean;
   manage_schedule: boolean;
   manage_staff: boolean;
+  manage_chat: boolean;
   full_admin_access: boolean;
   is_active: boolean;
 };
@@ -51,6 +53,7 @@ export const PERMISSION_LABELS: Record<PermissionFlag, string> = {
   manage_pricing: "Manage pricing",
   manage_schedule: "Manage schedule",
   manage_staff: "Full admin access (staff management)",
+  manage_chat: "Manage group chat (rooms, mute, kick)",
 };
 
 export const ALL_PERMISSION_FLAGS: PermissionFlag[] = Object.keys(
@@ -74,6 +77,7 @@ export function emptyPermissions(profileId: string): AdminPermissions {
     manage_pricing: false,
     manage_schedule: false,
     manage_staff: false,
+    manage_chat: false,
     full_admin_access: false,
     is_active: true,
   };
@@ -129,6 +133,7 @@ export const ADMIN_NAV_PERMISSIONS: Record<string, PermissionFlag | "super_admin
   "/admin/users": "manage_staff",
   "/admin/cms/media": "manage_media",
   "/admin/enrollments": "manage_enrollments",
+  "/admin/chat": null,
   "/admin/inquiries": "view_inquiries",
   "/admin/payments": "view_payments",
   "/admin/lockers": "view_students",

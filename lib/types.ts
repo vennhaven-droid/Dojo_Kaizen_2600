@@ -212,6 +212,58 @@ export interface EnrollmentLead {
 
 export type InquiryStatus = "NEW" | "READ" | "REPLIED" | "CLOSED";
 
+export type ChatRoomVisibility = "OPEN" | "INVITE" | "STAFF" | "PARENTS_STAFF";
+export type ChatMemberRole = "admin" | "member";
+export type ChatMemberStatus = "active" | "muted" | "removed" | "blocked";
+export type ChatMessageKind = "text" | "system";
+
+export interface ChatRoom {
+  id: string;
+  name: string;
+  description: string | null;
+  visibility: ChatRoomVisibility;
+  created_by: string | null;
+  is_archived: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChatMember {
+  id: string;
+  room_id: string;
+  profile_id: string;
+  role: ChatMemberRole;
+  status: ChatMemberStatus;
+  muted_until: string | null;
+  removed_at: string | null;
+  removed_by: string | null;
+  created_at: string;
+  updated_at: string;
+  profiles?: {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    role: UserRole;
+    avatar_url: string | null;
+  } | null;
+}
+
+export interface ChatMessage {
+  id: string;
+  room_id: string;
+  sender_id: string | null;
+  body: string;
+  kind: ChatMessageKind;
+  deleted_at: string | null;
+  created_at: string;
+  profiles?: {
+    first_name: string | null;
+    last_name: string | null;
+    avatar_url: string | null;
+  } | null;
+}
+
 export interface ContactInquiry {
   id: string;
   name: string;
