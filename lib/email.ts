@@ -4,26 +4,34 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM = process.env.RESEND_FROM_EMAIL ?? "hello@dojokaizen.com";
-const DEFAULT_ADMIN_EMAIL = "kaidoj0828@gmail.com";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "hello@dojokaizen2600.com";
+const DEFAULT_ADMIN_EMAILS = [
+  "kaidoj0828@gmail.com",
+  "jazeline.ispsc@gmail.com",
+  "vennhaven@gmail.com",
+];
 
 export function getAdminEmails(): string[] {
-  const raw = process.env.ADMIN_EMAIL ?? DEFAULT_ADMIN_EMAIL;
-  const emails = raw
+  const extra = (process.env.ADMIN_EMAIL ?? "")
     .split(",")
     .map((email) => email.trim())
     .filter(Boolean);
-  return emails.length > 0 ? emails : [DEFAULT_ADMIN_EMAIL];
+  return [...new Set([...DEFAULT_ADMIN_EMAILS, ...extra])];
 }
 
 export async function sendEmail(to: string | string[], subject: string, html: string) {
+  const recipients = Array.isArray(to) ? to.join(", ") : to;
   if (!resend) {
-    console.log(`[Email stub] To: ${Array.isArray(to) ? to.join(", ") : to}, Subject: ${subject}`);
-    return { success: true, stub: true };
+    console.warn(`[Email stub] RESEND_API_KEY is not set. To: ${recipients}, Subject: ${subject}`);
+    return { success: false, stub: true };
   }
   try {
-    await resend.emails.send({ from: FROM, to, subject, html });
-    return { success: true };
+    const { data, error } = await resend.emails.send({ from: FROM, to, subject, html });
+    if (error) {
+      console.error("Email send failed:", error);
+      return { success: false, error };
+    }
+    return { success: true, id: data?.id };
   } catch (error) {
     console.error("Email send failed:", error);
     return { success: false, error };
@@ -59,12 +67,24 @@ export function enrollmentNotification(data: {
   program: string;
   phone: string;
   email: string;
+  birthday?: string | null;
+  parentName?: string | null;
+  parentPhone?: string | null;
+  parentEmail?: string | null;
+  emergencyContact?: string | null;
 }) {
+  const extra: string[] = [];
+  if (data.birthday) extra.push(`<p>Birthday: ${data.birthday}</p>`);
+  if (data.parentName) extra.push(`<p>Parent: ${data.parentName}</p>`);
+  if (data.parentPhone) extra.push(`<p>Parent phone: ${data.parentPhone}</p>`);
+  if (data.parentEmail) extra.push(`<p>Parent email: ${data.parentEmail}</p>`);
+  if (data.emergencyContact) extra.push(`<p>Emergency contact: ${data.emergencyContact}</p>`);
   return `
     <h1>New Enrollment Lead</h1>
     <p><strong>${data.firstName} ${data.lastName}</strong> is interested in ${data.program}.</p>
     <p>Phone: ${data.phone}</p>
     <p>Email: ${data.email}</p>
+    ${extra.join("\n    ")}
   `;
 }
 

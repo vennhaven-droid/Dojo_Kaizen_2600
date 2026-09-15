@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  await sendEmail(
+  const emailResult = await sendEmail(
     getAdminEmails(),
     "New Enrollment Lead",
     enrollmentNotification({
@@ -66,8 +66,17 @@ export async function POST(request: Request) {
       program: data.program_interest,
       phone: data.phone,
       email: data.email,
+      birthday: data.birthday,
+      parentName: parent_name,
+      parentPhone: parent_phone,
+      parentEmail: parent_email,
+      emergencyContact: data.emergency_contact || null,
     })
   );
+
+  if (!emailResult.success) {
+    console.error("Enrollment saved but admin email failed:", emailResult);
+  }
 
   return NextResponse.json({ success: true });
 }
