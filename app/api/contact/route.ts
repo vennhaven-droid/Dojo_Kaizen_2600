@@ -33,10 +33,12 @@ export async function POST(request: Request) {
     }
   }
 
+  const content = contactFormEmail({ name, email, message });
   await sendEmail(
     getAdminEmails(),
     `Contact from ${name}`,
-    contactFormEmail({ name, email, message })
+    content.html,
+    { text: content.text, replyTo: email }
   );
 
   return NextResponse.json({ success: true });

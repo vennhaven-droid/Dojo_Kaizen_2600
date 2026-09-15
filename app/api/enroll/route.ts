@@ -57,21 +57,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  const message = enrollmentNotification({
+    firstName: data.first_name,
+    lastName: data.last_name,
+    program: data.program_interest,
+    phone: data.phone,
+    email: data.email,
+    birthday: data.birthday,
+    parentName: parent_name,
+    parentPhone: parent_phone,
+    parentEmail: parent_email,
+    emergencyContact: data.emergency_contact || null,
+  });
+
   const emailResult = await sendEmail(
     getAdminEmails(),
-    "New Enrollment Lead",
-    enrollmentNotification({
-      firstName: data.first_name,
-      lastName: data.last_name,
-      program: data.program_interest,
-      phone: data.phone,
-      email: data.email,
-      birthday: data.birthday,
-      parentName: parent_name,
-      parentPhone: parent_phone,
-      parentEmail: parent_email,
-      emergencyContact: data.emergency_contact || null,
-    })
+    `New enrollment: ${data.first_name} ${data.last_name} — ${data.program_interest}`,
+    message.html,
+    { text: message.text, replyTo: data.email }
   );
 
   if (!emailResult.success) {
