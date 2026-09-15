@@ -1,7 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
+import * as Linking from "expo-linking";
+import * as WebBrowser from "expo-web-browser";
 import { apiFetch } from "@/lib/api";
+import { GOOGLE_OAUTH_REDIRECT } from "@/lib/links";
+import { sessionFromUrl } from "@/lib/session-from-url";
 import { supabase } from "@/lib/supabase";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export type MeStudent = {
   id: string;
@@ -12,6 +18,8 @@ export type MeStudent = {
   balance: number;
   checked_in: boolean;
   checked_out: boolean;
+  checked_in_at: string | null;
+  checked_out_at: string | null;
   payments: Array<{
     id: string;
     amount: number;
@@ -48,6 +56,7 @@ type AuthContextValue = {
   me: MePayload | null;
   refreshMe: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -69,6 +78,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session?.access_token]);
 
   useEffect(() => {
+    async function handleUrl(url: string | null) {
+      if (!url) return;
+      if (!url.includes("code=") && !url.includes("access_token=")) return;
+      await sessionFromUrl(url);
+    }
+
+    void Linking.getInitialURL().then((url) => handleUrl(url).catch(() => undefined));
+    const sub = Linking.addEventListener("url", ({ url }) => {
+      void handleUrl(url).catch(() => undefined);
+    });
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session ?? null);
       setReady(true);
@@ -76,7 +96,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
     });
-    return () => data.subscription.unsubscribe();
+    return () => {
+      sub.remove();
+      data.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -96,6 +119,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn: async (email, password) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+      },
+      signInWithGoogle: async () => {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: GOOGLE_OAUTH_REDIRECT,
+            skipBrowserRedirect: true,
+            queryParams: {
+              access_type: "offline",
+              prompt: "consent",
+            },
+          },
+        });
+        if (error) throw error;
+        if (!data.url) throw new Error("Google sign-in did not start.");
+
+        const result = await WebBrowser.openAuthSessionAsync(data.url, GOOGLE_OAUTH_REDIRECT);
+        if (result.type === "cancel" || result.type === "dismiss") return;
+        if (result.type !== "success" || !result.url) {
+          throw new Error("Google sign-in did not finish.");
+        }
+        await sessionFromUrl(result.url);
       },
       signOut: async () => {
         await supabase.auth.signOut();

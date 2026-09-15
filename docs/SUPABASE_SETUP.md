@@ -46,6 +46,23 @@ SUPABASE_SERVICE_ROLE_KEY=       # SERVICE_ROLE_KEY from /opt/supabase/.env
 
 Marketing pages work without these; admin, portals, chat, and the member app require them.
 
+## Mobile Google sign-in
+
+The Expo app uses the same Google **Web** OAuth client as the website. Google Cloud’s authorized redirect URI stays the Kong callback:
+
+```
+https://api.dojokaizen2600.com/auth/v1/callback
+```
+
+On the VPS Auth URL allow-list (Studio **Authentication → URL Configuration**, or `GOTRUE_URI_ALLOW_LIST` / `GOTRUE_ADDITIONAL_REDIRECT_URLS` in `/opt/supabase/.env`), include:
+
+```
+https://dojokaizen2600.com/auth/callback
+dojokaizen://auth/callback
+```
+
+Keep the website callback. Add the `dojokaizen://` URI so Google sign-in can return to the Android/iOS app.
+
 ## Create a super admin (if needed)
 
 ```sql

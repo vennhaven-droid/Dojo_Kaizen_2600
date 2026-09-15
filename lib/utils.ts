@@ -48,6 +48,17 @@ export function todayISO(): string {
   return new Date().toISOString().split("T")[0];
 }
 
+export function formatTime(value?: string | null, timeZone = "Asia/Manila") {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString("en-PH", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone,
+  });
+}
+
 export function daysSince(date: string | null): number | null {
   if (!date) return null;
   const d = new Date(date);

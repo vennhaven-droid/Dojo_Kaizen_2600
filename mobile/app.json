@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dojo Kaizen",
     "slug": "dojo-kaizen",
-    "version": "1.0.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "dojokaizen",
@@ -16,6 +16,14 @@
     },
     "android": {
       "package": "com.dojokaizen.members",
+      "versionCode": 2,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "category": ["BROWSABLE", "DEFAULT"],
+          "data": [{ "scheme": "dojokaizen" }]
+        }
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#0B0B0B",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -31,6 +39,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-web-browser",
       [
         "expo-splash-screen",
         {
@@ -42,6 +51,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f05d34de-bb1d-47c9-93e2-9e0276487051"
+      }
+    },
+    "owner": "vennhaven"
   }
 }

@@ -221,6 +221,7 @@ export function ChatWorkspace({
               setActiveRoomId(roomId);
               setMobileThread(true);
             }}
+            onCancel={() => setShowCreate(false)}
             onError={setError}
           />
         )}
@@ -387,9 +388,11 @@ function ChatBubble({
 
 function CreateRoomForm({
   onCreated,
+  onCancel,
   onError,
 }: {
   onCreated: (roomId: string) => Promise<void>;
+  onCancel: () => void;
   onError: (message: string) => void;
 }) {
   const supabase = useMemo(() => createClient(), []);
@@ -428,9 +431,14 @@ function CreateRoomForm({
           </option>
         ))}
       </select>
-      <Button type="submit" size="sm" className="w-full" disabled={pending}>
-        {pending ? "Creating…" : "Create room"}
-      </Button>
+      <div className="flex gap-2">
+        <Button type="submit" size="sm" className="flex-1" disabled={pending}>
+          {pending ? "Creating…" : "Create room"}
+        </Button>
+        <Button type="button" size="sm" variant="outline" onClick={onCancel} disabled={pending}>
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 }

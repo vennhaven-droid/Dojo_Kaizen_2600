@@ -30,7 +30,7 @@ export default async function StudentDashboard() {
 
   const { data: todayAttendance } = await supabase
     ?.from("attendance")
-    .select("checked_out_at")
+    .select("checked_in_at, checked_out_at")
     .eq("student_id", student.id)
     .eq("date", todayISO())
     .maybeSingle() ?? { data: null };
@@ -116,6 +116,8 @@ export default async function StudentDashboard() {
       <TrainTodayButton
         initialCheckedIn={Boolean(todayAttendance)}
         initialCheckedOut={Boolean(todayAttendance?.checked_out_at)}
+        initialCheckedInAt={todayAttendance?.checked_in_at}
+        initialCheckedOutAt={todayAttendance?.checked_out_at}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { ALL_PERMISSION_FLAGS, PERMISSION_LABELS } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createUserAccount } from "@/app/admin/users/actions";
@@ -79,7 +80,7 @@ export function CreateUserForm({
             </div>
             <div>
               <Label>Login password</Label>
-              <Input name="login_password" type="password" minLength={8} />
+              <PasswordInput name="login_password" minLength={8} autoComplete="new-password" />
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -119,7 +120,7 @@ export function CreateUserForm({
             </div>
             <div>
               <Label>Parent password</Label>
-              <Input name="parent_password" type="password" minLength={8} />
+              <PasswordInput name="parent_password" minLength={8} autoComplete="new-password" />
             </div>
           </div>
         </>
@@ -154,7 +155,7 @@ export function CreateUserForm({
           </div>
           <div>
             <Label>Temporary password</Label>
-            <Input name="password" type="password" required minLength={8} />
+            <PasswordInput name="password" required minLength={8} autoComplete="new-password" />
           </div>
         </>
       )}

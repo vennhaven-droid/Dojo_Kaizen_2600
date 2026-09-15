@@ -134,10 +134,18 @@ function CreateRoomModal({
     onCreated(room?.id, room?.name ?? createdName);
   }
 
+  function dismiss() {
+    setError("");
+    setName("");
+    setDescription("");
+    setVisibility("INVITE");
+    onClose();
+  }
+
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <View style={styles.modalBg}>
-        <View style={styles.modal}>
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={dismiss}>
+      <Pressable style={styles.modalBg} onPress={dismiss}>
+        <Pressable style={styles.modal} onPress={() => undefined}>
           <Text style={styles.name}>New room</Text>
           <TextInput
             placeholder="Name"
@@ -164,11 +172,11 @@ function CreateRoomModal({
           <Pressable style={styles.gold} onPress={create} disabled={pending || !name.trim()}>
             <Text style={styles.goldText}>{pending ? "Creating…" : "Create"}</Text>
           </Pressable>
-          <Pressable onPress={onClose} style={{ marginTop: 12 }}>
-            <Text style={styles.muted}>Cancel</Text>
+          <Pressable style={styles.cancel} onPress={dismiss} disabled={pending}>
+            <Text style={styles.cancelText}>Cancel</Text>
           </Pressable>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -219,4 +227,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   goldText: { color: colors.black, fontWeight: "800", textTransform: "uppercase" },
+  cancel: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: "#0D74D155",
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: "center",
+  },
+  cancelText: { color: colors.gray, fontWeight: "800", textTransform: "uppercase" },
 });

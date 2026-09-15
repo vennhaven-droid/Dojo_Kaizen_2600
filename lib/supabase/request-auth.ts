@@ -115,6 +115,8 @@ export type MeStudent = {
   balance: number;
   checked_in: boolean;
   checked_out: boolean;
+  checked_in_at: string | null;
+  checked_out_at: string | null;
   payments: Array<{
     id: string;
     amount: number;
@@ -155,7 +157,7 @@ export async function buildMePayload(profile: Profile) {
           .limit(30),
         supabase
           .from("attendance")
-          .select("checked_out_at")
+          .select("checked_in_at, checked_out_at")
           .eq("student_id", student.id)
           .eq("date", today)
           .maybeSingle(),
@@ -180,6 +182,8 @@ export async function buildMePayload(profile: Profile) {
         balance,
         checked_in: Boolean(attendance),
         checked_out: Boolean(attendance?.checked_out_at),
+        checked_in_at: attendance?.checked_in_at ?? null,
+        checked_out_at: attendance?.checked_out_at ?? null,
         payments: (payments ?? []).map((p) => ({
           id: p.id,
           amount: Number(p.amount),

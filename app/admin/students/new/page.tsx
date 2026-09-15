@@ -4,6 +4,7 @@ import { requirePermission } from "@/lib/permissions-server";
 import { createStudent } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { redirect } from "next/navigation";
@@ -31,7 +32,7 @@ export default async function NewStudentPage() {
           <p className="text-sm text-kaizen-muted">Create a student login so they can check in and view their dashboard.</p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5"><Label>Login Email</Label><Input name="login_email" type="email" /></div>
-            <div className="space-y-1.5"><Label>Login Password</Label><Input name="login_password" type="password" minLength={8} /></div>
+            <div className="space-y-1.5"><Label>Login Password</Label><PasswordInput name="login_password" minLength={8} autoComplete="new-password" /></div>
           </div>
         </section>
         <section className="space-y-4">
@@ -83,7 +84,7 @@ export default async function NewStudentPage() {
           <h3 className="font-display text-lg text-gold">Parent Portal Account (optional)</h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5"><Label>Parent Email</Label><Input name="parent_email" type="email" /></div>
-            <div className="space-y-1.5"><Label>Parent Password</Label><Input name="parent_password" type="password" minLength={8} /></div>
+            <div className="space-y-1.5"><Label>Parent Password</Label><PasswordInput name="parent_password" minLength={8} autoComplete="new-password" /></div>
             <div className="space-y-1.5"><Label>Parent First Name</Label><Input name="parent_first_name" /></div>
             <div className="space-y-1.5"><Label>Parent Last Name</Label><Input name="parent_last_name" /></div>
           </div>

@@ -37,10 +37,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Train",
+          title: "Check in",
           tabBarIcon: ({ color }) => (
             <SymbolView
-              name={{ ios: "figure.walk", android: "directions_walk", web: "directions_walk" }}
+              name={{ ios: "checkmark.circle", android: "check_circle", web: "check_circle" }}
               tintColor={color}
               size={26}
             />
