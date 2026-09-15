@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 import { apiFetch } from "@/lib/api";
-import { GOOGLE_OAUTH_REDIRECT } from "@/lib/links";
+import { GOOGLE_OAUTH_REDIRECT, APP_SCHEME_CALLBACK } from "@/lib/links";
 import { sessionFromUrl } from "@/lib/session-from-url";
 import { supabase } from "@/lib/supabase";
 
@@ -16,6 +16,10 @@ export type MeStudent = {
   status: string;
   due_date: string | null;
   balance: number;
+  phone: string | null;
+  birthday: string | null;
+  address: string | null;
+  email: string | null;
   checked_in: boolean;
   checked_out: boolean;
   checked_in_at: string | null;
@@ -35,6 +39,28 @@ export type MeStudent = {
     due_date: string | null;
     program_name: string | null;
   }>;
+  attendance: Array<{
+    id: string;
+    date: string;
+    check_in_method: string | null;
+    checked_in_at: string | null;
+    checked_out_at: string | null;
+  }>;
+  achievements: Array<{
+    id: string;
+    name: string;
+    description: string | null;
+    icon: string | null;
+    earned: boolean;
+  }>;
+  competitions: Array<{
+    id: string;
+    name: string;
+    date: string | null;
+    division: string | null;
+    result: string | null;
+    medal: string | null;
+  }>;
 };
 
 export type MePayload = {
@@ -45,9 +71,13 @@ export type MePayload = {
     last_name: string | null;
     email: string | null;
     avatar_url: string | null;
+    phone: string | null;
   };
   students: MeStudent[];
   canManageChat: boolean;
+  canAccessAdmin?: boolean;
+  permissions?: Record<string, boolean> | null;
+  announcements?: Array<{ id: string; title: string; body: string | null; published_at: string | null }>;
 };
 
 type AuthContextValue = {
@@ -135,7 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (error) throw error;
         if (!data.url) throw new Error("Google sign-in did not start.");
 
-        const result = await WebBrowser.openAuthSessionAsync(data.url, GOOGLE_OAUTH_REDIRECT);
+        const result = await WebBrowser.openAuthSessionAsync(data.url, APP_SCHEME_CALLBACK);
         if (result.type === "cancel" || result.type === "dismiss") return;
         if (result.type !== "success" || !result.url) {
           throw new Error("Google sign-in did not finish.");

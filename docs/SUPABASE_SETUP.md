@@ -58,10 +58,11 @@ On the VPS Auth URL allow-list (Studio **Authentication → URL Configuration**,
 
 ```
 https://dojokaizen2600.com/auth/callback
+https://dojokaizen2600.com/auth/app
 dojokaizen://auth/callback
 ```
 
-Keep the website callback. Add the `dojokaizen://` URI so Google sign-in can return to the Android/iOS app.
+Keep the website callback. The app uses `https://dojokaizen2600.com/auth/app`, which forwards the OAuth code to `dojokaizen://auth/callback` without exchanging it. Restart the Auth container after changing the allow-list.
 
 ## Create a super admin (if needed)
 

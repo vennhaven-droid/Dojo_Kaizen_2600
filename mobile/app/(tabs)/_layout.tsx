@@ -4,9 +4,11 @@ import { SymbolView } from "expo-symbols";
 import { useAuth } from "@/context/auth";
 import { colors } from "@/constants/Colors";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { isStaffRole } from "@/lib/permissions-lite";
 
 export default function TabLayout() {
-  const { ready, session } = useAuth();
+  const { ready, session, me } = useAuth();
+  const staff = isStaffRole(me?.profile.role);
 
   if (!ready) {
     return (
@@ -61,6 +63,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="records"
+        options={{
+          title: "Records",
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: "trophy", android: "emoji_events", web: "emoji_events" }}
+              tintColor={color}
+              size={26}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="chat"
         options={{
           title: "Chat",
@@ -68,6 +83,21 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{ ios: "bubble.left.and.bubble.right", android: "forum", web: "forum" }}
+              tintColor={color}
+              size={26}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="admin"
+        options={{
+          title: "Admin",
+          headerShown: false,
+          href: staff ? undefined : null,
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: "gearshape", android: "settings", web: "settings" }}
               tintColor={color}
               size={26}
             />
