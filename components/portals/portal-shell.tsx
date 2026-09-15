@@ -234,6 +234,7 @@ export function StatusBadge({ status }: { status: string }) {
     CONTACTED: "bg-blue/20 text-blue border-blue/40",
     ENROLLED: "bg-green-500/20 text-green-400 border-green-500/40",
     NOT_PROCEEDING: "bg-kaizen-muted/20 text-kaizen-muted border-kaizen-muted/40",
+    ARCHIVED: "bg-kaizen-muted/20 text-kaizen-muted border-kaizen-muted/40",
     READ: "bg-blue/20 text-blue border-blue/40",
     REPLIED: "bg-green-500/20 text-green-400 border-green-500/40",
     CLOSED: "bg-kaizen-muted/20 text-kaizen-muted border-kaizen-muted/40",

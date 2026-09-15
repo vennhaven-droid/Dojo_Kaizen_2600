@@ -21,3 +21,31 @@ export async function updateEnrollmentLead(id: string, formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/admin/enrollments");
 }
+
+export async function archiveEnrollmentLead(id: string) {
+  await requirePermission("manage_enrollments");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+
+  const { error } = await supabase
+    .from("enrollment_leads")
+    .update({ status: "ARCHIVED" })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/enrollments");
+}
+
+export async function restoreEnrollmentLead(id: string) {
+  await requirePermission("manage_enrollments");
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Database not configured");
+
+  const { error } = await supabase
+    .from("enrollment_leads")
+    .update({ status: "NEW" })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/enrollments");
+}

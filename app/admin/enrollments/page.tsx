@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requirePermission } from "@/lib/permissions-server";
 import { convertEnrollmentLead } from "../students/actions";
-import { updateEnrollmentLead } from "./actions";
+import { archiveEnrollmentLead, restoreEnrollmentLead, updateEnrollmentLead } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/portals/portal-shell";
@@ -27,7 +28,17 @@ type Lead = {
   notes: string | null;
 };
 
-function EnrollmentActions({ lead }: { lead: Lead }) {
+function EnrollmentActions({ lead, archived }: { lead: Lead; archived: boolean }) {
+  if (archived) {
+    return (
+      <form action={restoreEnrollmentLead.bind(null, lead.id)}>
+        <Button type="submit" size="sm" variant="outline" className="w-full sm:w-auto">
+          Restore
+        </Button>
+      </form>
+    );
+  }
+
   return (
     <>
       <details>
@@ -59,26 +70,49 @@ function EnrollmentActions({ lead }: { lead: Lead }) {
       {lead.status === "ENROLLED" && lead.notes?.includes("Converted to student") && (
         <p className="mt-2 text-xs text-kaizen-muted break-words">{lead.notes}</p>
       )}
+      <form action={archiveEnrollmentLead.bind(null, lead.id)} className="mt-2">
+        <Button type="submit" size="sm" variant="secondary" className="w-full sm:w-auto">
+          Archive
+        </Button>
+      </form>
     </>
   );
 }
 
-export default async function EnrollmentsPage() {
+export default async function EnrollmentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
   await requirePermission("manage_enrollments");
+  const { view } = await searchParams;
+  const archived = view === "archived";
   const supabase = await createClient();
-  const { data: leads } = await supabase
-    ?.from("enrollment_leads")
-    .select("*")
-    .order("created_at", { ascending: false }) ?? { data: [] };
+
+  let query = supabase?.from("enrollment_leads").select("*").order("created_at", { ascending: false });
+  query = archived ? query?.eq("status", "ARCHIVED") : query?.neq("status", "ARCHIVED");
+  const { data: leads } = (await query) ?? { data: [] };
 
   const list = (leads ?? []) as Lead[];
 
   return (
     <div className="space-y-6">
-      <h2 className="font-display text-2xl font-bold">Enrollment Applications</h2>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h2 className="font-display text-2xl font-bold">Enrollment Applications</h2>
+        <div className="flex gap-2">
+          <Button asChild size="sm" variant={archived ? "outline" : "gold"}>
+            <Link href="/admin/enrollments">Active</Link>
+          </Button>
+          <Button asChild size="sm" variant={archived ? "gold" : "outline"}>
+            <Link href="/admin/enrollments?view=archived">Archived</Link>
+          </Button>
+        </div>
+      </div>
 
       {list.length === 0 ? (
-        <MobileEmptyState message="No enrollment applications yet." />
+        <MobileEmptyState
+          message={archived ? "No archived enrollment applications." : "No enrollment applications yet."}
+        />
       ) : (
         <ResponsiveTable
           desktop={
@@ -118,7 +152,7 @@ export default async function EnrollmentsPage() {
                           <StatusBadge status={lead.status} />
                         </td>
                         <td className="px-4 py-3">
-                          <EnrollmentActions lead={lead} />
+                          <EnrollmentActions lead={lead} archived={archived} />
                         </td>
                       </tr>
                     ))}
@@ -148,7 +182,7 @@ export default async function EnrollmentsPage() {
                   ),
                 },
               ]}
-              footer={<EnrollmentActions lead={lead} />}
+              footer={<EnrollmentActions lead={lead} archived={archived} />}
             />
           ))}
         />
