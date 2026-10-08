@@ -110,6 +110,10 @@ export function MarketingFooter({ logoUrl }: { logoUrl?: string }) {
         </div>
         <p className="mt-6 text-center text-xs text-kaizen-muted">
           &copy; {new Date().getFullYear()} {BRAND.name}. All rights reserved.
+          {" · "}
+          <Link href="/privacy" className="hover:text-gold transition-colors">
+            Privacy Policy
+          </Link>
         </p>
       </div>
     </footer>

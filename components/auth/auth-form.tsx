@@ -189,6 +189,10 @@ export function AuthForm() {
           <Link href="/contact" className="text-blue hover:underline">
             Contact us
           </Link>
+          {" · "}
+          <Link href="/privacy" className="text-blue hover:underline">
+            Privacy Policy
+          </Link>
         </p>
       </CardContent>
     </Card>
