@@ -122,6 +122,36 @@ export default function PrivacyPage() {
           why we collect it, and how you can reach us.
         </p>
 
+        <section
+          id="delete"
+          className="mt-10 rounded-2xl border border-gold/40 bg-gold/5 p-6"
+        >
+          <h2 className="font-display text-xl font-bold text-gold">
+            How to request that your data is deleted
+          </h2>
+          <p className="mt-3 text-kaizen-muted leading-relaxed">
+            This is for the Dojo Kaizen member app and website ({BRAND.name}).
+          </p>
+          <ol className="mt-4 list-decimal space-y-2 pl-5 text-kaizen-muted leading-relaxed">
+            <li>
+              Email{" "}
+              <a href={`mailto:${BRAND.email}`} className="text-blue hover:underline">
+                {BRAND.email}
+              </a>{" "}
+              from the same address as your login. Use the subject line “Delete my data”.
+            </li>
+            <li>Tell us the name on the account. We may ask you to confirm it is you.</li>
+            <li>We will deactivate the login so you can no longer sign in to the app or website.</li>
+          </ol>
+          <p className="mt-4 text-kaizen-muted leading-relaxed">
+            We delete or disconnect personal login data such as name on the profile, email,
+            phone, address, photo, chat messages you sent, and the password. We may keep
+            membership, payment, and attendance records that the academy needs for ordinary
+            billing and class history. We aim to complete a request within 30 days and will
+            reply by email.
+          </p>
+        </section>
+
         <div className="mt-10 space-y-10">
           {SECTIONS.map((section) => (
             <section key={section.id} id={section.id}>
